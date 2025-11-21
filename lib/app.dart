@@ -1,3 +1,4 @@
+import 'package:car_hub/ui/screens/auth/pin_verification_screen.dart';
 import 'package:car_hub/ui/screens/auth/reset_email_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_in_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_up_screen.dart';
@@ -27,6 +28,7 @@ class CarHub extends StatelessWidget {
         ),
         textTheme: TextTheme(
           titleLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+          titleMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
         ),
 
         inputDecorationTheme: InputDecorationThemeData(
@@ -56,7 +58,8 @@ class CarHub extends StatelessWidget {
         WelcomeScreen.name: (_) => WelcomeScreen(),
         SignInScreen.name: (_) => SignInScreen(),
         SignUpScreen.name : (_) => SignUpScreen(),
-        ResetEmailScreen.name : (_) => ResetEmailScreen()
+        ResetEmailScreen.name : (_) => ResetEmailScreen(),
+        PinVerificationScreen.name : (_) => PinVerificationScreen()
       },
       initialRoute: SplashScreen.name,
     );

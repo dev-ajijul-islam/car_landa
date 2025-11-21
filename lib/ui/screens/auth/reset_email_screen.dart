@@ -1,9 +1,15 @@
+import 'package:car_hub/ui/screens/auth/pin_verification_screen.dart';
 import 'package:flutter/material.dart';
 
-class ResetEmailScreen extends StatelessWidget {
+class ResetEmailScreen extends StatefulWidget {
   const ResetEmailScreen({super.key});
   static String name = "reset-email";
 
+  @override
+  State<ResetEmailScreen> createState() => _ResetEmailScreenState();
+}
+
+class _ResetEmailScreenState extends State<ResetEmailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,10 +44,14 @@ class ResetEmailScreen extends StatelessWidget {
                 ],
               ),
             ),
-            FilledButton(onPressed: () {}, child: Text("Continue")),
+            FilledButton(onPressed: _onTapContinueButton, child: Text("Continue")),
           ],
         ),
       ),
     );
+  }
+
+  _onTapContinueButton(){
+    Navigator.pushNamed(context, PinVerificationScreen.name);
   }
 }
