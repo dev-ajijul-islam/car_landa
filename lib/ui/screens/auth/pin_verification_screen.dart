@@ -1,14 +1,21 @@
+import 'package:car_hub/ui/screens/auth/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-class PinVerificationScreen extends StatelessWidget {
+class PinVerificationScreen extends StatefulWidget {
   const PinVerificationScreen({super.key});
 
   static String name = "pin-verify";
 
   @override
+  State<PinVerificationScreen> createState() => _PinVerificationScreenState();
+}
+
+class _PinVerificationScreenState extends State<PinVerificationScreen> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -50,12 +57,16 @@ class PinVerificationScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                FilledButton(onPressed: () {}, child: Text("Continue")),
+                FilledButton(onPressed: _onTapVerifyButton, child: Text("Verify")),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  _onTapVerifyButton(){
+    Navigator.pushNamed(context, ResetPasswordScreen.name);
   }
 }
