@@ -5,6 +5,7 @@ class AssetsFilePaths {
   static String svgCurveRectangle = "$basePath/curve_rectangle.svg";
   static String svgTickLogo = "$basePath/tick_logo.svg";
   static String car1 = "$basePath/carosel_images/car1.png";
+  static String carTypeImage1 = "$basePath/car_type_images/car_type_1.png";
   static String car2 = "$basePath/carosel_images/car2.png";
   static String car3 = "$basePath/carosel_images/car3.png";
   static String google = "$basePath/google.png";
