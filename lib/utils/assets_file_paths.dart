@@ -12,4 +12,5 @@ class AssetsFilePaths {
   static String profileFrame = "$basePath/profile_frame.png";
   static String svgTriangle = "$basePath/svg_triangle.svg";
   static String helpImg = "$basePath/help.png";
+  static String runningCar = "$basePath/running_car.png";
 }
