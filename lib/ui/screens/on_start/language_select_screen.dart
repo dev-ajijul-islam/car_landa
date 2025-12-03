@@ -1,4 +1,4 @@
-import 'package:car_hub/ui/screens/welcome_screen.dart';
+import 'package:car_hub/ui/screens/on_start/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 class LanguageSelectScreen extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:car_hub/ui/screens/search_result_screen.dart';
+import 'package:car_hub/ui/screens/home/search_result_screen.dart';
 import 'package:car_hub/ui/widgets/search_dialog/seacrch_filter_sheet.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';

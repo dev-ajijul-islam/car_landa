@@ -8,16 +8,16 @@ import 'package:car_hub/ui/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_up/email_verification_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_up/sign_up_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_up/sign_up_success_screen.dart';
-import 'package:car_hub/ui/screens/booking_cost_calculation.dart';
-import 'package:car_hub/ui/screens/car_details_screen.dart';
-import 'package:car_hub/ui/screens/delivery_info_screen.dart';
-import 'package:car_hub/ui/screens/home_screen.dart';
-import 'package:car_hub/ui/screens/notifications_screen.dart';
-import 'package:car_hub/ui/screens/payment_screen.dart';
-import 'package:car_hub/ui/screens/search_result_screen.dart';
-import 'package:car_hub/ui/screens/welcome_screen.dart';
-import 'package:car_hub/ui/screens/language_select_screen.dart';
-import 'package:car_hub/ui/screens/splash_screen.dart';
+import 'package:car_hub/ui/screens/home/booking_cost_calculation.dart';
+import 'package:car_hub/ui/screens/home/car_details_screen.dart';
+import 'package:car_hub/ui/screens/home/delivery_info_screen.dart';
+import 'package:car_hub/ui/screens/home/home_screen.dart';
+import 'package:car_hub/ui/screens/home/notifications_screen.dart';
+import 'package:car_hub/ui/screens/home/payment_screen.dart';
+import 'package:car_hub/ui/screens/home/search_result_screen.dart';
+import 'package:car_hub/ui/screens/on_start/welcome_screen.dart';
+import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
+import 'package:car_hub/ui/screens/on_start/splash_screen.dart';
 
 import 'package:flutter/material.dart';
 

@@ -1,4 +1,4 @@
-import 'package:car_hub/ui/screens/delivery_info_screen.dart';
+import 'package:car_hub/ui/screens/home/delivery_info_screen.dart';
 import 'package:car_hub/ui/widgets/common_dialog.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';

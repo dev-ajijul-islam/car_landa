@@ -1,4 +1,4 @@
-import 'package:car_hub/ui/screens/notifications_screen.dart';
+import 'package:car_hub/ui/screens/home/notifications_screen.dart';
 import 'package:car_hub/ui/widgets/car_card.dart';
 import 'package:car_hub/ui/widgets/help_chat_dialog.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';

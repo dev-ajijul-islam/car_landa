@@ -1,4 +1,4 @@
-import 'package:car_hub/ui/screens/home_screen.dart';
+import 'package:car_hub/ui/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainLayout extends StatefulWidget {

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:car_hub/ui/main_layout.dart';
-import 'package:car_hub/ui/screens/home_screen.dart';
 import 'package:car_hub/ui/widgets/set_profile_bottom_sheet.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';

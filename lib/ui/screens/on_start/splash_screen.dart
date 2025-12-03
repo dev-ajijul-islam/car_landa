@@ -1,4 +1,4 @@
-import 'package:car_hub/ui/screens/language_select_screen.dart';
+import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

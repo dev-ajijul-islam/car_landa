@@ -1,4 +1,4 @@
-import 'package:car_hub/ui/screens/payment_screen.dart';
+import 'package:car_hub/ui/screens/home/home_screen.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
