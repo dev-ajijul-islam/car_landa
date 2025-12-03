@@ -1,12 +1,11 @@
+import 'package:car_hub/ui/screens/payment_screen.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-void commonDialog(BuildContext context) {
-
-  Future.delayed(Duration(seconds: 1),(){
+void commonDialog(BuildContext context,{required String title,required String subtitle }) {
+  Future.delayed(Duration(seconds: 1), () async {
     Navigator.pop(context);
-
   });
 
   showDialog(
@@ -21,12 +20,12 @@ void commonDialog(BuildContext context) {
             SvgPicture.asset(AssetsFilePaths.doneSvg),
             Text(
               textAlign: TextAlign.center,
-              "Booking request done",
+              title,
               style: TextTheme.of(context).titleLarge,
             ),
             Text(
               textAlign: TextAlign.center,
-              "Your booking request has been sent. Once the admin accepts your request, you will be able to make the payment",
+              subtitle,
             ),
           ],
         ),

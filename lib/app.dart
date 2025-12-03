@@ -10,8 +10,10 @@ import 'package:car_hub/ui/screens/auth/sign_up/sign_up_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_up/sign_up_success_screen.dart';
 import 'package:car_hub/ui/screens/booking_cost_calculation.dart';
 import 'package:car_hub/ui/screens/car_details_screen.dart';
+import 'package:car_hub/ui/screens/delivery_info_screen.dart';
 import 'package:car_hub/ui/screens/home_screen.dart';
 import 'package:car_hub/ui/screens/notifications_screen.dart';
+import 'package:car_hub/ui/screens/payment_screen.dart';
 import 'package:car_hub/ui/screens/search_result_screen.dart';
 import 'package:car_hub/ui/screens/welcome_screen.dart';
 import 'package:car_hub/ui/screens/language_select_screen.dart';
@@ -91,7 +93,9 @@ class CarHub extends StatelessWidget {
         SearchResultScreen.name : (_) => SearchResultScreen(),
         NotificationsScreen.name : (_)=> NotificationsScreen(),
         CarDetailsScreen.name : (_)=> CarDetailsScreen(),
-        BookingCostCalculation.name : (_) => BookingCostCalculation()
+        BookingCostCalculation.name : (_) => BookingCostCalculation(),
+        PaymentScreen.name : (_) => PaymentScreen(),
+        DeliveryInfoScreen.name : (_) => DeliveryInfoScreen()
       },
       initialRoute: SplashScreen.name,
     );

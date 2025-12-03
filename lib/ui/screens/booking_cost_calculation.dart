@@ -1,3 +1,4 @@
+import 'package:car_hub/ui/screens/payment_screen.dart';
 import 'package:car_hub/ui/widgets/common_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -7,11 +8,8 @@ class BookingCostCalculation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Car cost"),
-      ),
+      appBar: AppBar(title: Text("Car cost")),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -74,9 +72,12 @@ class BookingCostCalculation extends StatelessWidget {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: FilledButton(onPressed: () {
-                  _onTapBookNowButton(context);
-                }, child: Text("Book now")),
+                child: FilledButton(
+                  onPressed: () {
+                    _onTapBookNowButton(context);
+                  },
+                  child: Text("Book now"),
+                ),
               ),
             ),
           ],
@@ -85,7 +86,15 @@ class BookingCostCalculation extends StatelessWidget {
     );
   }
 
-  void _onTapBookNowButton(BuildContext context){
-    commonDialog(context);
+  void _onTapBookNowButton(BuildContext context) {
+    commonDialog(
+      context,
+      title: "Booking Request Done",
+      subtitle:
+          "Your booking request has been sent. Once the admin accepts your request, you will be able to make the payment",
+    );
+    Future.delayed(Duration(seconds: 1), () {
+      Navigator.pushNamed(context, PaymentScreen.name);
+    });
   }
 }
