@@ -18,6 +18,7 @@ import 'package:car_hub/ui/screens/home/search_result_screen.dart';
 import 'package:car_hub/ui/screens/on_start/welcome_screen.dart';
 import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
 import 'package:car_hub/ui/screens/on_start/splash_screen.dart';
+import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
 
 import 'package:flutter/material.dart';
 
@@ -95,7 +96,8 @@ class CarHub extends StatelessWidget {
         CarDetailsScreen.name : (_)=> CarDetailsScreen(),
         BookingCostCalculation.name : (_) => BookingCostCalculation(),
         PaymentScreen.name : (_) => PaymentScreen(),
-        DeliveryInfoScreen.name : (_) => DeliveryInfoScreen()
+        DeliveryInfoScreen.name : (_) => DeliveryInfoScreen(),
+        TrackingProgress.name : (_) => TrackingProgress()
       },
       initialRoute: SplashScreen.name,
     );

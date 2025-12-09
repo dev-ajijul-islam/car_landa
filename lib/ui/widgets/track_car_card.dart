@@ -1,4 +1,5 @@
 import 'package:car_hub/ui/screens/home/car_details_screen.dart';
+import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -113,9 +114,7 @@ class _TrackCarCardState extends State<TrackCarCard> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         title: Text("Enter code", style: TextTheme.of(context).titleMedium),
         content: Column(
           spacing: 10,
@@ -124,7 +123,12 @@ class _TrackCarCardState extends State<TrackCarCard> {
             TextField(
               decoration: InputDecoration(hintText: "Enter your tracking code"),
             ),
-            FilledButton(onPressed: () {}, child: Text("Track your car")),
+            FilledButton(
+              onPressed: () {
+                Navigator.pushNamed(context, TrackingProgress.name);
+              },
+              child: Text("Track your car"),
+            ),
           ],
         ),
       ),
