@@ -3,6 +3,8 @@ import 'package:car_hub/ui/screens/profile/change_password.dart';
 import 'package:car_hub/ui/screens/profile/my_bookings.dart';
 import 'package:car_hub/ui/screens/profile/my_history.dart';
 import 'package:car_hub/ui/screens/profile/personal_information.dart';
+import 'package:car_hub/ui/screens/profile/terms_and_condition.dart';
+import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
@@ -98,7 +100,11 @@ class Profile extends StatelessWidget {
       "title": "Language",
       "route": LanguageSelectScreen.name,
     },
-    {"icon": Icons.question_mark, "title": "Terms & Condition"},
+    {
+      "icon": Icons.question_mark,
+      "title": "Terms & Condition",
+      "route": TermsAndCondition.name,
+    },
     {"icon": Icons.logout_outlined, "title": "Log Out"},
   ];
 }
@@ -133,6 +139,8 @@ class _ProfileMenuTileState extends State<ProfileMenuTile> {
             widget.route!,
             arguments: {"fromProfileScreen": true},
           );
+        } else if (widget.title == "Log Out") {
+          _onTapLogOut();
         }
       },
       leading: Icon(widget.icon),
@@ -149,6 +157,48 @@ class _ProfileMenuTileState extends State<ProfileMenuTile> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
       tileColor: Colors.white,
       title: Text(widget.title),
+    );
+  }
+
+  void _onTapLogOut() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        content: Column(
+          spacing: 10,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(AssetsFilePaths.done),
+            Text("Log Out?", style: TextTheme.of(context).titleMedium),
+            Text(
+              textAlign: TextAlign.center,
+              "You’ve been signed out safely. See you again soon!",
+              style: TextTheme.of(context).bodyMedium,
+            ),
+            Row(
+              spacing: 5,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: OutlinedButton(onPressed: () {}, child: Text("No")),
+                ),
+                Expanded(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: Size(double.maxFinite, 40),
+                    ),
+                    onPressed: () {},
+                    child: Text("Yes"),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

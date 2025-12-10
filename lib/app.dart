@@ -22,6 +22,7 @@ import 'package:car_hub/ui/screens/profile/change_password.dart';
 import 'package:car_hub/ui/screens/profile/my_bookings.dart';
 import 'package:car_hub/ui/screens/profile/my_history.dart';
 import 'package:car_hub/ui/screens/profile/personal_information.dart';
+import 'package:car_hub/ui/screens/profile/terms_and_condition.dart';
 import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
 
 import 'package:flutter/material.dart';
@@ -105,7 +106,8 @@ class CarHub extends StatelessWidget {
         PersonalInformation.name : (_) => PersonalInformation(),
         ChangePassword.name : (_) => ChangePassword(),
         MyHistory.name : (_) => MyHistory(),
-        MyBookings.name : (_)=> MyBookings()
+        MyBookings.name : (_)=> MyBookings(),
+        TermsAndCondition.name : (_) => TermsAndCondition()
       },
       initialRoute: SplashScreen.name,
     );
