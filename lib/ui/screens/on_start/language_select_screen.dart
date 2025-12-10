@@ -18,6 +18,9 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
     final args = ModalRoute.of(context)?.settings.arguments;
 
     return Scaffold(
+      appBar: args != null ? AppBar(
+        title: Text("Language"),
+      ) : null,
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

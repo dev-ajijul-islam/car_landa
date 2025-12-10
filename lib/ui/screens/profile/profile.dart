@@ -1,5 +1,6 @@
 import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
 import 'package:car_hub/ui/screens/profile/change_password.dart';
+import 'package:car_hub/ui/screens/profile/my_bookings.dart';
 import 'package:car_hub/ui/screens/profile/my_history.dart';
 import 'package:car_hub/ui/screens/profile/personal_information.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +83,11 @@ class Profile extends StatelessWidget {
       "route": ChangePassword.name,
     },
     {"icon": Icons.notifications_outlined, "title": "Notification"},
-    {"icon": Icons.directions_car_sharp, "title": "My Bookings Car"},
+    {
+      "icon": Icons.directions_car_sharp,
+      "title": "My Bookings Car",
+      "route": MyBookings.name,
+    },
     {
       "icon": Icons.history_outlined,
       "title": "History",
@@ -110,7 +115,6 @@ class ProfileMenuTile extends StatefulWidget {
     required this.icon,
     this.switchMode,
     this.route,
-
   });
 
   @override
@@ -124,7 +128,11 @@ class _ProfileMenuTileState extends State<ProfileMenuTile> {
     return ListTile(
       onTap: () {
         if (widget.route != null) {
-          Navigator.pushNamed(context, widget.route!,arguments: {"fromProfileScreen" : true});
+          Navigator.pushNamed(
+            context,
+            widget.route!,
+            arguments: {"fromProfileScreen": true},
+          );
         }
       },
       leading: Icon(widget.icon),
