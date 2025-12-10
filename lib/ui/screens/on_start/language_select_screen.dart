@@ -15,6 +15,8 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -29,7 +31,7 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
                 Center(
                   child: Text(
                     "Choose your language",
-                    style: TextTheme.of(context).titleLarge
+                    style: TextTheme.of(context).titleLarge,
                   ),
                 ),
                 Center(
@@ -57,7 +59,14 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
                 ),
               ],
             ),
-            FilledButton(onPressed: _onTapContinueButton, child: Text("Continue")),
+            FilledButton(
+              onPressed: _onTapContinueButton,
+              child: Text(
+                (args != null)
+                    ? "Save"
+                    : "Continue",
+              ),
+            ),
           ],
         ),
       ),
@@ -101,9 +110,7 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
     );
   }
 
-
-
-  void _onTapContinueButton(){
+  void _onTapContinueButton() {
     Navigator.pushNamed(context, WelcomeScreen.name);
   }
 }

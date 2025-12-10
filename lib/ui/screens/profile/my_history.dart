@@ -67,13 +67,6 @@ class _MyHistoryState extends State<MyHistory> {
                 HistoryCard(),
                 HistoryCard(),
                 HistoryCard(),
-                HistoryCard(),
-                HistoryCard(),
-                HistoryCard(),
-                HistoryCard(),
-                HistoryCard(),
-                HistoryCard(),
-                HistoryCard(),
               ],
             ))
           ],
