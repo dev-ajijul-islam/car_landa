@@ -4,17 +4,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LanguageSelectScreen extends StatefulWidget {
+class LanguageSelectScreen extends StatelessWidget {
   const LanguageSelectScreen({super.key});
 
   static String name = "language-select";
 
-  @override
-  State<LanguageSelectScreen> createState() => _LanguageSelectScreenState();
-}
-
-class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
-  String? selectedLanguage = "English";
+  final String selectedLanguage = "English";
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +49,22 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
                 ),
 
                 buildLanguageTile(
+                  context: context,
                   flag: "https://flagcdn.com/w40/us.png",
                   value: "en_US",
-                  name: "English"
+                  name: "English",
                 ),
                 buildLanguageTile(
+                  context: context,
                   flag: "https://flagcdn.com/w40/bd.png",
                   value: "bn",
-                  name: "Bangla"
+                  name: "Bangla",
                 ),
               ],
             ),
             FilledButton(
               onPressed: () {
-                _onTapContinueButton(args);
+                _onTapContinueButton(context, args);
               },
               child: Text((args != null) ? "save".tr() : "continue".tr()),
             ),
@@ -77,7 +74,7 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
     );
   }
 
-  void _onTapContinueButton(args) {
+  void _onTapContinueButton(BuildContext context, args) {
     if (args != null) {
       Navigator.pop(context);
     } else {
@@ -85,7 +82,12 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
     }
   }
 
-  Container buildLanguageTile({required String flag, required String value,required String name}) {
+  Container buildLanguageTile({
+    required BuildContext context,
+    required String flag,
+    required String value,
+    required String name,
+  }) {
     bool isSelected = selectedLanguage == value;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),

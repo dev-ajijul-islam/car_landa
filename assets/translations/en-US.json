@@ -1,7 +1,33 @@
 {
-  "choose_lang_title" : "Choose your language",
-  "choose_lang_description" : "Select your preferred language to use CarLanda",
-  "continue" : "Continue",
-  "save" : "Save",
-  "language" : "Language"
+  "welcome_slides": {
+    "0": {
+      "title": "Welcome to CarLanda",
+      "subtitle": "Your gateway to premium vehicles, delivered from around the world"
+    },
+    "1" :{
+      "title": "Fast & Secure Shipping",
+      "subtitle": "Get your dream car delivered safely and quickly"
+    },
+    "2" :{
+      "title": "Worldwide Collection",
+      "subtitle": "Explore vehicles from Japan, UK, USA and more"
+    },
+    "3":{
+      "title": "Buy With Confidence",
+      "subtitle": "Verified vehicles from trusted global sellers"
+    },
+    "4":{
+      "title": "Let's Get Started",
+      "subtitle": "Experience a seamless car buying journey"
+    }
+    },
+  "skip" : "Skip",
+  "next" : "Next",
+  "get_started" : "Get Started",
+
+  "choose_lang_title": "Choose your language",
+  "choose_lang_description": "Select your preferred language to use CarLanda",
+  "continue": "Continue",
+  "save": "Save",
+  "language": "Language"
 }

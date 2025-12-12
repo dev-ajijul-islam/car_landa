@@ -1,6 +1,7 @@
 import 'package:car_hub/ui/screens/auth/sign_in/sign_in_screen.dart';
 
 import 'package:car_hub/utils/assets_file_paths.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -16,12 +17,41 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final CarouselSliderController _carouselSliderController =
       CarouselSliderController();
-  List sliders = [1, 2, 3, 4, 5];
+
 
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+
+    final List<dynamic> sliders = [
+      {
+        'image': AssetsFilePaths.car1,
+        'title': 'welcome_slides.0.title',
+        'subtitle': 'welcome_slides.0.subtitle',
+      },
+      {
+        'image': AssetsFilePaths.car1,
+        'title': 'welcome_slides.1.title',
+        'subtitle': 'welcome_slides.1.subtitle',
+      },
+      {
+        'image': AssetsFilePaths.car1,
+        'title': 'welcome_slides.2.title',
+        'subtitle': 'welcome_slides.2.subtitle',
+      },
+      {
+        'image': AssetsFilePaths.car1,
+        'title': 'welcome_slides.3.title',
+        'subtitle': 'welcome_slides.3.subtitle',
+      },
+      {
+        'image': AssetsFilePaths.car1,
+        'title': 'welcome_slides.4.title',
+        'subtitle': 'welcome_slides.4.subtitle',
+      },
+    ];
+
     return Scaffold(
       body: Stack(
         alignment: Alignment.topCenter,
@@ -66,12 +96,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   child: Column(
                                     children: [
                                       Text(
-                                        "Welcome to CarLanda",
+                                        i["title"].toString().tr(),
                                         style: TextTheme.of(context).bodyLarge,
                                       ),
                                       Text(
                                         textAlign: TextAlign.center,
-                                        "Your gateway to premium vehicles, delivered from around the world ",
+                                          i["subtitle"].toString().tr()
                                       ),
                                     ],
                                   ),
@@ -97,8 +127,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         },
                         child: Text(
                           (currentIndex == sliders.indexOf(sliders.last)
-                              ? "Get Started"
-                              : "Next"),
+                              ? "get_started".tr()
+                              : "next".tr()),
                         ),
                       ),
                     ),
@@ -142,7 +172,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: TextButton(
               style: TextButton.styleFrom(foregroundColor: Colors.white),
               onPressed: onTapSkipButton,
-              child: Text("Skip"),
+              child: Text("skip".tr()),
             ),
           ),
         ],
