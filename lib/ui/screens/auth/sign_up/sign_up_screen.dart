@@ -36,7 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isLoading = context.select<AuthProvider, bool>(
-      (p) => p.signUpInProgress,
+      (p) => p.inProgress,
     );
 
     return Scaffold(
@@ -232,6 +232,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           context: context,
           email: _emailController.text.trim(),
           password: _passwordController.text,
+          name: _nameController.text.trim()
         );
 
     if (!mounted) return;

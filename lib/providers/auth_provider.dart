@@ -3,10 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
-  bool signUpInProgress = false;
+  bool inProgress = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
 
   ///=================================sign up with email and password===========================
 
@@ -14,8 +13,9 @@ class AuthProvider extends ChangeNotifier {
     required BuildContext context,
     required String email,
     required String password,
+    String? name,
   }) async {
-    signUpInProgress = true;
+    inProgress = true;
     notifyListeners();
 
     try {
@@ -26,27 +26,88 @@ class AuthProvider extends ChangeNotifier {
 
       final user = credential.user;
       if (user != null) {
+        if (name != null) {
+          await credential.user?.updateDisplayName(name);
+        }
         debugPrint("User created: ${user.uid}");
-        showSnackbarMessage(context: context, message: "Sign up successful",color: Colors.green);
+        showSnackbarMessage(
+          context: context,
+          message: "Sign up successful",
+          color: Colors.green,
+        );
         return true;
       }
       return false;
     } on FirebaseAuthException catch (e) {
       debugPrint("Firebase error: ${e.code}");
-      showSnackbarMessage(context: context, message: e.message.toString(),color: Colors.red);
+      showSnackbarMessage(
+        context: context,
+        message: e.message.toString(),
+        color: Colors.red,
+      );
       return false;
     } catch (e) {
       debugPrint("Unknown error: $e");
-      showSnackbarMessage(context: context, message: e.toString(),color: Colors.red);
+      showSnackbarMessage(
+        context: context,
+        message: e.toString(),
+        color: Colors.red,
+      );
       return false;
     } finally {
-      signUpInProgress = false;
+      inProgress = false;
       notifyListeners();
     }
   }
 
-///=================================sign in with email and password===========================
+  ///=================================sign in with email and password===========================
 
+  Future<bool> signInWithEmailAndPassword({
+    required BuildContext context,
+    required String email,
+    required String password,
+  }) async {
+    inProgress = true;
+    notifyListeners();
 
-
+    try {
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final user = credential.user;
+      if (user != null) {
+        showSnackbarMessage(
+          context: context,
+          message: "Sign in successful",
+          color: Colors.green,
+        );
+        return true;
+      } else {
+        showSnackbarMessage(
+          context: context,
+          message: "Sign in Failed",
+          color: Colors.red,
+        );
+        return false;
+      }
+    } on FirebaseAuthException catch (e) {
+      showSnackbarMessage(
+        context: context,
+        message: e.message.toString(),
+        color: Colors.red,
+      );
+      return false;
+    } catch (e) {
+      showSnackbarMessage(
+        context: context,
+        message: e.toString(),
+        color: Colors.red,
+      );
+      return false;
+    } finally {
+      inProgress = false;
+      notifyListeners();
+    }
+  }
 }

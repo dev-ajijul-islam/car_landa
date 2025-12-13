@@ -1,9 +1,12 @@
+import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/ui/main_layout.dart';
 import 'package:car_hub/ui/screens/auth/sign_in/reset_email_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_up/sign_up_screen.dart';
+import 'package:car_hub/ui/widgets/loading.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -14,8 +17,25 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _isPasswordShow = false;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bool loading = context.select<AuthProvider, bool>(
+      (p) => p.inProgress,
+    );
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -28,7 +48,10 @@ class _SignInScreenState extends State<SignInScreen> {
                 SizedBox(height: 20),
                 Align(
                   alignment: Alignment.topRight,
-                  child: TextButton(onPressed: _onTapSkipButton, child: Text("Skip")),
+                  child: TextButton(
+                    onPressed: _onTapSkipButton,
+                    child: Text("Skip"),
+                  ),
                 ),
 
                 Text("Sign In", style: TextTheme.of(context).titleLarge),
@@ -38,6 +61,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   textAlign: TextAlign.center,
                 ),
                 Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 5,
@@ -47,6 +71,16 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: Text("Email"),
                       ),
                       TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Enter email";
+                          }
+                          if (!value.contains("@")) {
+                            return "Enter valid email";
+                          }
+                          return null;
+                        },
+                        controller: _emailController,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.mail_outline_rounded),
                           hintText: "Enter your Email",
@@ -57,10 +91,28 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: Text("Password"),
                       ),
                       TextFormField(
-                        obscureText: true,
+                        controller: _passwordController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Enter Password";
+                          }
+                          return null;
+                        },
+                        obscureText: !_isPasswordShow,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock_outline_rounded),
-                          suffixIcon: Icon(Icons.visibility_off_outlined),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordShow = !_isPasswordShow;
+                              });
+                            },
+                            icon: Icon(
+                              _isPasswordShow
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                          ),
                           hintText: "Enter your Email",
                         ),
                       ),
@@ -74,7 +126,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           child: Text("Forget password"),
                         ),
                       ),
-                      FilledButton(onPressed: _onTapSignInButton, child: Text("Sign in")),
+                      FilledButton(
+                        onPressed: loading ? null : _onTapSignInButton,
+                        child: loading ? Loading() : Text("Sign in"),
+                      ),
                       SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -143,16 +198,31 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  _onTapSignInButton() {
+  Future<void> _onTapSignInButton() async {
+    final success = await context
+        .read<AuthProvider>()
+        .signInWithEmailAndPassword(
+          context: context,
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+    if (success) {
+      _emailController.clear();
+      _passwordController.clear();
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        MainLayout.name,
+        (route) => false,
+      );
+    }
+  }
+
+  _onTapSkipButton() {
     Navigator.pushNamedAndRemoveUntil(
       context,
       MainLayout.name,
-      (route) => false,
+      (predicate) => false,
     );
-  }
-
-  _onTapSkipButton(){
-    Navigator.pushNamedAndRemoveUntil(context, MainLayout.name, (predicate)=> false);
   }
 
   _onTapForgetPasswordButton() {
