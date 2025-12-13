@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:car_hub/ui/main_layout.dart';
 import 'package:car_hub/ui/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:car_hub/ui/widgets/show_snackbar_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -14,10 +18,10 @@ class AuthProvider extends ChangeNotifier {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  ///=================================sign up with email and password===========================
+  ///================================= Sign up with email & password ===========================
 
   Future<bool> signUpWithEmailAndPassword({
-    required BuildContext context,
+    required context,
     required String email,
     required String password,
     String? name,
@@ -31,12 +35,11 @@ class AuthProvider extends ChangeNotifier {
         password: password,
       );
 
-      final user = credential.user;
-      if (user != null) {
+      if (credential.user != null) {
         if (name != null) {
-          await credential.user?.updateDisplayName(name);
+          await credential.user!.updateDisplayName(name);
         }
-        debugPrint("User created: ${user.uid}");
+
         showSnackbarMessage(
           context: context,
           message: "Sign up successful",
@@ -46,18 +49,9 @@ class AuthProvider extends ChangeNotifier {
       }
       return false;
     } on FirebaseAuthException catch (e) {
-      debugPrint("Firebase error: ${e.code}");
       showSnackbarMessage(
         context: context,
-        message: e.message.toString(),
-        color: Colors.red,
-      );
-      return false;
-    } catch (e) {
-      debugPrint("Unknown error: $e");
-      showSnackbarMessage(
-        context: context,
-        message: e.toString(),
+        message: e.message ?? "Sign up failed",
         color: Colors.red,
       );
       return false;
@@ -67,10 +61,10 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  ///=================================sign in with email and password===========================
+  ///================================= Sign in with email & password ===========================
 
   Future<bool> signInWithEmailAndPassword({
-    required BuildContext context,
+    required context,
     required String email,
     required String password,
   }) async {
@@ -82,33 +76,20 @@ class AuthProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
-      final user = credential.user;
-      if (user != null) {
+
+      if (credential.user != null) {
         showSnackbarMessage(
           context: context,
           message: "Sign in successful",
           color: Colors.green,
         );
         return true;
-      } else {
-        showSnackbarMessage(
-          context: context,
-          message: "Sign in Failed",
-          color: Colors.red,
-        );
-        return false;
       }
+      return false;
     } on FirebaseAuthException catch (e) {
       showSnackbarMessage(
         context: context,
-        message: e.message.toString(),
-        color: Colors.red,
-      );
-      return false;
-    } catch (e) {
-      showSnackbarMessage(
-        context: context,
-        message: e.toString(),
+        message: e.message ?? "Sign in failed",
         color: Colors.red,
       );
       return false;
@@ -118,29 +99,84 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  ///================================= Watch current user===========================
+  ///================================= Google Sign In (google_sign_in ^7.2.0) ===========================
+
+  Future<bool> signInWithGoogle(context) async {
+    inProgress = true;
+    notifyListeners();
+
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      await googleSignIn.initialize();
+
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
+
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        throw Exception("Google ID Token is null");
+      }
+
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
+
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        showSnackbarMessage(
+          context: context,
+          message: "Google sign in successful",
+          color: Colors.green,
+        );
+
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          MainLayout.name,
+          (route) => false,
+        );
+
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      showSnackbarMessage(
+        context: context,
+        message: "Google sign in failed: $e",
+        color: Colors.red,
+      );
+      return false;
+    } finally {
+      inProgress = false;
+      notifyListeners();
+    }
+  }
+
+  ///================================= Watch current user ===========================
 
   void _watchCurrentUser() {
     _auth.authStateChanges().listen((User? user) {
-      if (user != null) {
-        currentUser = user;
-      }
+      currentUser = user;
+      notifyListeners();
     });
   }
 
-  ///=================================sign out===========================
+  ///================================= Sign out ===========================
 
-  Future<void> signOut(BuildContext context) async {
+  Future<void> signOut(context) async {
     try {
-      await _auth.signOut().then((value) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          SignInScreen.name,
-          (route) => false,
-        );
-      });
+      await _auth.signOut();
+      await GoogleSignIn.instance.signOut();
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        SignInScreen.name,
+        (_) => false,
+      );
     } catch (e) {
-      showSnackbarMessage(context: context, message: "Sign out failed $e");
+      showSnackbarMessage(context: context, message: "Sign out failed: $e");
     }
   }
 }

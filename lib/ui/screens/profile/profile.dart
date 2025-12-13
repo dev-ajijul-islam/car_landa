@@ -42,7 +42,7 @@ class _ProfileState extends State<Profile> {
                     backgroundImage: profileImage != null
                         ? FileImage(File(profileImage!.path))
                         : user!.photoURL != null
-                        ? NetworkImage(user!.photoURL.toString())
+                        ? NetworkImage(user.photoURL.toString())
                         : AssetImage(AssetsFilePaths.dummyProfile),
                   ),
 

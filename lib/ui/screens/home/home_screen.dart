@@ -65,9 +65,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 CircleAvatar(
                                   backgroundColor: Colors.white,
-                                  backgroundImage: user?.photoURL != null ? NetworkImage(
-                                    user!.photoURL.toString()
-                                  ) : AssetImage(AssetsFilePaths.dummyProfile),
+                                  backgroundImage: user?.photoURL != null
+                                      ? NetworkImage(user!.photoURL.toString())
+                                      : AssetImage(
+                                          AssetsFilePaths.dummyProfile,
+                                        ),
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: TextTheme.of(context).titleMedium
                                           ?.copyWith(
                                             color: Colors.white,
+                                            fontSize: 17,
                                             height: 0,
                                           ),
                                     ),

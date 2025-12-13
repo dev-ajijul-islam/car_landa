@@ -176,7 +176,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(height: 10),
 
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.read<AuthProvider>().signInWithGoogle(context);
+                        },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.black87,
                         ),

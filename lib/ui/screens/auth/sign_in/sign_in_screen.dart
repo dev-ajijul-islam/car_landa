@@ -96,6 +96,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           if (value == null || value.isEmpty) {
                             return "Enter Password";
                           }
+                          if(value.length <6){
+                            return "Password must be at least 6 characters";
+                          }
                           return null;
                         },
                         obscureText: !_isPasswordShow,
@@ -127,7 +130,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       FilledButton(
-                        onPressed: loading ? null : _onTapSignInButton,
+                        onPressed:(){
+                          loading ? null : _onTapSignInButton(context);
+                        } ,
                         child: loading ? Loading() : Text("Sign in"),
                       ),
                       SizedBox(height: 10),
@@ -157,7 +162,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.black87,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          context.read<AuthProvider>().signInWithGoogle(context);
+                        },
                         child: Row(
                           spacing: 10,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -198,22 +205,24 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Future<void> _onTapSignInButton() async {
-    final success = await context
-        .read<AuthProvider>()
-        .signInWithEmailAndPassword(
-          context: context,
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+  Future<void> _onTapSignInButton(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      final success = await context
+          .read<AuthProvider>()
+          .signInWithEmailAndPassword(
+            context: context,
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+      if (success) {
+        _emailController.clear();
+        _passwordController.clear();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          MainLayout.name,
+          (route) => false,
         );
-    if (success) {
-      _emailController.clear();
-      _passwordController.clear();
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        MainLayout.name,
-        (route) => false,
-      );
+      }
     }
   }
 
