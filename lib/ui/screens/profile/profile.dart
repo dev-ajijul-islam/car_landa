@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
 import 'package:car_hub/ui/screens/profile/change_password.dart';
 import 'package:car_hub/ui/screens/profile/my_bookings.dart';
@@ -7,8 +8,10 @@ import 'package:car_hub/ui/screens/profile/my_history.dart';
 import 'package:car_hub/ui/screens/profile/personal_information.dart';
 import 'package:car_hub/ui/screens/profile/terms_and_condition.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -22,6 +25,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    final User? user = context.watch<AuthProvider>().currentUser;
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -37,9 +41,9 @@ class _ProfileState extends State<Profile> {
                     backgroundColor: Colors.white,
                     backgroundImage: profileImage != null
                         ? FileImage(File(profileImage!.path))
-                        : NetworkImage(
-                            "https://scontent.fdac24-5.fna.fbcdn.net/v/t39.30808-1/455086251_1029469555479420_7495595057560540792_n.jpg?stp=c0.411.1365.1364a_dst-jpg_s480x480_tt6&_nc_cat=105&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeHG59vjK7oCVF247ccDGzMkfI0X5DlYQtB8jRfkOVhC0H31wd3jNO6Z2zvdgc1g92xM_OuDQXBb5ScSne_0qs9R&_nc_ohc=_u9iSgq4-TEQ7kNvwFS4qsP&_nc_oc=AdnCpeXKetzlzB4vsJ4yiBDfs0l6F89WlDxilWeY8GwA-xqRhBm-0tR1EoTAIK5GuWw&_nc_zt=24&_nc_ht=scontent.fdac24-5.fna&_nc_gid=bgzSj--_j13pz1yOWe3OjA&oh=00_Afk8fJXUZWEOmLIdsKI86afTO8YhP2EVxVW0XtROLTIiGw&oe=693DD180",
-                          ),
+                        : user!.photoURL != null
+                        ? NetworkImage(user!.photoURL.toString())
+                        : AssetImage(AssetsFilePaths.dummyProfile),
                   ),
 
                   Positioned(
@@ -62,8 +66,11 @@ class _ProfileState extends State<Profile> {
             SizedBox(height: 15),
             Column(
               children: [
-                Text("Ajijul Islam", style: TextTheme.of(context).titleMedium),
-                Text("devajijulislam@gmail.com"),
+                Text(
+                  user!.displayName.toString(),
+                  style: TextTheme.of(context).titleMedium,
+                ),
+                Text(user.email.toString()),
               ],
             ),
 

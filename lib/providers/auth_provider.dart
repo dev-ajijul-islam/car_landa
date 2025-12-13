@@ -3,7 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
+  AuthProvider() {
+    _watchCurrentUser();
+  }
+
   bool inProgress = false;
+
+  User? currentUser;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -109,5 +115,15 @@ class AuthProvider extends ChangeNotifier {
       inProgress = false;
       notifyListeners();
     }
+  }
+
+  ///================================= Watch current user===========================
+
+  void _watchCurrentUser() {
+    _auth.authStateChanges().listen((User? user) {
+      if (user != null) {
+        currentUser = user;
+      }
+    });
   }
 }
