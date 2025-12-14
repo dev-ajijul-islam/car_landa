@@ -41,6 +41,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await NetworkCaller.postRequest(Urls.createUser, {
         "name": name,
         "email": email,
+        "authenticatedBy": "credentials",
       });
 
       if (!response.success) {
@@ -142,6 +143,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await NetworkCaller.postRequest(Urls.createUser, {
         "name": userCredential.user?.displayName,
         "email": userCredential.user?.email,
+        "authenticatedBy": "google",
       });
 
       if (!response.success) {

@@ -51,67 +51,75 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 40,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              spacing: 10,
+                  if(user != null)...[
+                    Visibility(
+                      visible: context.watch<AuthProvider>().currentUser != null,
+                      child: Positioned(
+                        top: 40,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: user?.photoURL != null
-                                      ? NetworkImage(user!.photoURL.toString())
-                                      : AssetImage(
-                                          AssetsFilePaths.dummyProfile,
-                                        ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  spacing: 10,
                                   children: [
-                                    Text(
-                                      "Hello, ${user!.displayName}",
-                                      style: TextTheme.of(context).titleMedium
-                                          ?.copyWith(
+                                    CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: user.photoURL != null
+                                          ? NetworkImage(
+                                        user.photoURL.toString(),
+                                      )
+                                          : AssetImage(
+                                        AssetsFilePaths.dummyProfile,
+                                      ),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Hello, ${user!.displayName}",
+                                          style: TextTheme.of(context).titleMedium
+                                              ?.copyWith(
                                             color: Colors.white,
                                             fontSize: 17,
                                             height: 0,
                                           ),
-                                    ),
-                                    Text(
-                                      "Welcome back!",
-                                      style: TextStyle(color: Colors.white),
+                                        ),
+                                        Text(
+                                          "Welcome back!",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
+                                IconButton(
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: ColorScheme.of(
+                                      context,
+                                    ).primary,
+                                  ),
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      NotificationsScreen.name,
+                                    );
+                                  },
+                                  icon: Icon(Icons.notifications_outlined),
+                                ),
                               ],
                             ),
-                            IconButton(
-                              style: IconButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: ColorScheme.of(
-                                  context,
-                                ).primary,
-                              ),
-                              color: Colors.white,
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  NotificationsScreen.name,
-                                );
-                              },
-                              icon: Icon(Icons.notifications_outlined),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                   Positioned(
                     top: 90,
                     right: 15,
