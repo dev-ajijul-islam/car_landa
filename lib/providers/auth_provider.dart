@@ -12,7 +12,6 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     _watchCurrentUser();
   }
-
   bool inProgress = false;
 
   User? currentUser;
@@ -22,7 +21,7 @@ class AuthProvider extends ChangeNotifier {
   ///================================= Sign up with email & password ===========================
 
   Future<bool> signUpWithEmailAndPassword({
-    required  context,
+    required context,
     required String email,
     required String password,
     required String name,
@@ -39,13 +38,10 @@ class AuthProvider extends ChangeNotifier {
       final user = credential.user;
       if (user == null) return false;
 
-      final response = await NetworkCaller.postRequest(
-        Urls.createUser,
-        {
-          "name": name,
-          "email": email,
-        },
-      );
+      final response = await NetworkCaller.postRequest(Urls.createUser, {
+        "name": name,
+        "email": email,
+      });
 
       if (!response.success) {
         await user.delete();
@@ -79,7 +75,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-
   ///================================= Sign in with email & password ===========================
 
   Future<bool> signInWithEmailAndPassword({
@@ -89,7 +84,6 @@ class AuthProvider extends ChangeNotifier {
   }) async {
     inProgress = true;
     notifyListeners();
-
     try {
       final credential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -118,7 +112,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  ///================================= Google Sign In (google_sign_in ^7.2.0) ===========================
+  ///================================= Google Sign In ===========================
 
   Future<bool> signInWithGoogle(context) async {
     inProgress = true;
@@ -143,23 +137,35 @@ class AuthProvider extends ChangeNotifier {
 
       final userCredential = await _auth.signInWithCredential(credential);
 
-      if (userCredential.user != null) {
+      if (userCredential.user == null) return false;
+
+      final response = await NetworkCaller.postRequest(Urls.createUser, {
+        "name": userCredential.user?.displayName,
+        "email": userCredential.user?.email,
+      });
+
+      if (!response.success) {
+        await userCredential.user?.delete();
+
         showSnackbarMessage(
           context: context,
-          message: "Google sign in successful",
-          color: Colors.green,
+          message: response.message,
+          color: Colors.red,
         );
-
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          MainLayout.name,
-          (route) => false,
-        );
-
-        return true;
+        return false;
       }
 
-      return false;
+      showSnackbarMessage(
+        context: context,
+        message: "Sign up successful",
+        color: Colors.green,
+      );
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        MainLayout.name,
+        (route) => false,
+      );
+      return true;
     } catch (e) {
       showSnackbarMessage(
         context: context,
