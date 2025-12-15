@@ -38,24 +38,24 @@ class CarModel {
     model = json['model'];
     year = json['year'];
     pricing = json['pricing'] != null
-        ?  Pricing.fromJson(json['pricing'])
+        ? Pricing.fromJson(json['pricing'])
         : null;
     location = json['location'] != null
-        ?  Location.fromJson(json['location'])
+        ? Location.fromJson(json['location'])
         : null;
-    media = json['media'] != null ?  Media.fromJson(json['media']) : null;
-    flags = json['flags'] != null ?  Flags.fromJson(json['flags']) : null;
-    specs = json['specs'] != null ?  Specs.fromJson(json['specs']) : null;
-    costs = json['costs'] != null ?  Costs.fromJson(json['costs']) : null;
+    media = json['media'] != null ? Media.fromJson(json['media']) : null;
+    flags = json['flags'] != null ? Flags.fromJson(json['flags']) : null;
+    specs = json['specs'] != null ? Specs.fromJson(json['specs']) : null;
+    costs = json['costs'] != null ? Costs.fromJson(json['costs']) : null;
     carTypeId = json['carTypeId'];
     description = json['description'];
     inquiryContacts = json['inquiryContacts'] != null
-        ?  InquiryContacts.fromJson(json['inquiryContacts'])
+        ? InquiryContacts.fromJson(json['inquiryContacts'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = sId;
     data['title'] = title;
     data['brand'] = brand;
@@ -95,26 +95,20 @@ class Pricing {
   Discount? discount;
   String? sId;
 
-  Pricing({
-    originalPrice,
-    sellingPrice,
-    currency,
-    discount,
-    sId,
-  });
+  Pricing({originalPrice, sellingPrice, currency, discount, sId});
 
   Pricing.fromJson(Map<String, dynamic> json) {
     originalPrice = json['originalPrice'];
     sellingPrice = json['sellingPrice'];
     currency = json['currency'];
     discount = json['discount'] != null
-        ?  Discount.fromJson(json['discount'])
+        ? Discount.fromJson(json['discount'])
         : null;
     sId = json['_id'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['originalPrice'] = originalPrice;
     data['sellingPrice'] = sellingPrice;
     data['currency'] = currency;
@@ -140,7 +134,7 @@ class Discount {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['type'] = type;
     data['value'] = value;
     data['_id'] = sId;
@@ -164,7 +158,7 @@ class Location {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['country'] = country;
     data['city'] = city;
     data['area'] = area;
@@ -187,7 +181,7 @@ class Media {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['thumbnail'] = thumbnail;
     data['gallery'] = gallery;
     data['_id'] = sId;
@@ -211,7 +205,7 @@ class Flags {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['isFeatured'] = isFeatured;
     data['isHotDeal'] = isHotDeal;
     data['isActive'] = isActive;
@@ -256,7 +250,7 @@ class Specs {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['mileageKm'] = mileageKm;
     data['enginePowerHp'] = enginePowerHp;
     data['fuelType'] = fuelType;
@@ -284,7 +278,7 @@ class Costs {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['shipping'] = shipping;
     data['customClearance'] = customClearance;
     data['_id'] = sId;
@@ -308,7 +302,7 @@ class InquiryContacts {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['call'] = call;
     data['message'] = message;
     data['whatsapp'] = whatsapp;

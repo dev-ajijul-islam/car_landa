@@ -1,4 +1,5 @@
 import 'package:car_hub/providers/auth_provider.dart';
+import 'package:car_hub/providers/featured_car_provider.dart';
 import 'package:car_hub/providers/language_provider.dart';
 import 'package:car_hub/ui/main_layout.dart';
 import 'package:car_hub/ui/screens/auth/profile_setup/set_profile_picture.dart';
@@ -41,6 +42,7 @@ class CarHub extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => LanguageProvider()),
         ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (_)=> FeaturedCarProvider())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
