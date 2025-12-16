@@ -11,48 +11,51 @@ class CarTypeCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            "Shop by car type",
-            style: TextTheme.of(context).titleMedium,
+    return Consumer<CarTypesProvider>(
+      builder: (context, provider, child) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              "Shop by car type",
+              style: TextTheme.of(context).titleMedium,
+            ),
           ),
-        ),
-        SizedBox(height: 10,),
-        CarouselSlider(
-          items: context.watch<CarTypesProvider>().carTypes.map((c) {
-            return Card(
-              margin: EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-              color: Colors.white,
-              child: Center(
-                child: Column(
-                  spacing: 5,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(AssetsFilePaths.carTypeImage1),
-                    Text(
-                      c,
-                      style: TextStyle(fontWeight: FontWeight.w400),
-                    ),
-                  ],
+          SizedBox(height: 10,),
+          CarouselSlider(
+            items: provider.carTypes.map((c) {
+              return Card(
+                margin: EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+                color: Colors.white,
+                child: Center(
+                  child: Column(
+                    spacing: 5,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(AssetsFilePaths.carTypeImage1),
+                      Text(
+                        c,
+                        style: TextStyle(fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
-          options: CarouselOptions(
-            padEnds: false,
-            pageSnapping: false,
-            initialPage: 0,
-            aspectRatio: 4.5,
-            viewportFraction: 0.27,
-            enableInfiniteScroll: false,
+              );
+            }).toList(),
+            options: CarouselOptions(
+              padEnds: false,
+              pageSnapping: false,
+              initialPage: 0,
+              aspectRatio: 4.5,
+              viewportFraction: 0.27,
+              enableInfiniteScroll: false,
+            ),
           ),
-        ),
-      ],
+        ],
+      );},
     );
   }
 }

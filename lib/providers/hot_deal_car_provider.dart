@@ -9,9 +9,10 @@ class HotDealCarProvider extends ChangeNotifier {
   bool isLoading = false;
 
   Future<void> getHotDealCar() async {
+    if(hotDealCars.isNotEmpty || isLoading) return;
+
     isLoading = true;
     notifyListeners();
-
     try {
       NetworkResponse response = await NetworkCaller.getRequest(
         url: Urls.getHotDealCar,

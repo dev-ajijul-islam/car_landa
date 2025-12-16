@@ -19,37 +19,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isInitialLoad = true;
-
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (_isInitialLoad) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final featuredProvider = context.read<FeaturedCarProvider>();
-        final hotDealProvider = context.read<HotDealCarProvider>();
-        final carTypeProvider = context.read<CarTypesProvider>();
-        if (featuredProvider.featuredCars.isEmpty &&
-            !featuredProvider.isLoading) {
-          featuredProvider.getFeaturedCar();
-        }
-        if (hotDealProvider.hotDealCars.isEmpty && !hotDealProvider.isLoading) {
-          hotDealProvider.getHotDealCar();
-        }
-        if (carTypeProvider.carTypes.isEmpty && !carTypeProvider.isLoading) {
-          carTypeProvider.getCarTypes();
-        }
-      });
-      _isInitialLoad = false;
-    }
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      if (mounted) {
+        context.read<FeaturedCarProvider>().getFeaturedCar();
+        context.read<HotDealCarProvider>().getHotDealCar();
+        context.read<CarTypesProvider>().getCarTypes();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final featuredCarProvider = context.watch<FeaturedCarProvider>();
-    final hotDealCarsProvider = context.watch<HotDealCarProvider>();
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
@@ -85,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              HotDealCarousel(hotDealCars: hotDealCarsProvider.hotDealCars),
+              HotDealCarousel(),
               CarTypeCarousel(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -98,61 +81,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextTheme.of(context).titleMedium,
                     ),
                     SizedBox(height: 10),
-
-                    if (featuredCarProvider.isLoading &&
-                        featuredCarProvider.featuredCars.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-
-                    if (featuredCarProvider.errorMessage != null &&
-                        featuredCarProvider.featuredCars.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Align(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Failed to load featured cars",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              SizedBox(height: 10),
-                              FilledButton(
-                                onPressed: () {
-                                  featuredCarProvider.getFeaturedCar();
-                                },
-                                child: Text("Retry"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                    if (!featuredCarProvider.isLoading &&
-                        featuredCarProvider.errorMessage == null &&
-                        featuredCarProvider.featuredCars.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Center(
-                          child: Text("No featured cars available"),
-                        ),
-                      ),
-
-                    if (featuredCarProvider.featuredCars.isNotEmpty)
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: featuredCarProvider.featuredCars.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final car = featuredCarProvider.featuredCars[index];
-                          return CarCard(car: car);
-                        },
-                      ),
+                    Consumer<FeaturedCarProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.isLoading) {
+                          return CircularProgressIndicator();
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: provider.featuredCars.length,
+                          itemBuilder: (context, index) =>
+                              CarCard(car: provider.featuredCars[index],),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -168,5 +110,3 @@ class _HomeScreenState extends State<HomeScreen> {
     searchDialog(context);
   }
 }
-
-

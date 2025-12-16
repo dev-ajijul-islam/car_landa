@@ -1,6 +1,5 @@
 import 'package:car_hub/providers/single_car_provider.dart';
 import 'package:car_hub/ui/widgets/delivery_option_dialog.dart';
-import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,22 +12,20 @@ class CarDetailsScreen extends StatefulWidget {
 }
 
 class _CarDetailsScreenState extends State<CarDetailsScreen> {
-  late final String carId;
   bool isFav = false;
-  bool _calledApi = false;
+
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    _loadInitialData();
+    super.initState();
+  }
 
-    if (!_calledApi) {
-      carId = ModalRoute.of(context)!.settings.arguments as String;
-      _calledApi = true;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<SingleCarProvider>().getCarById(carId);
-      });
-    }
+  _loadInitialData(){
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      final carId = ModalRoute.of(context)!.settings.arguments as String;
+      context.read<SingleCarProvider>().getCarById(carId);
+    });
   }
 
   @override

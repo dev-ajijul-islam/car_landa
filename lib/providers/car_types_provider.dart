@@ -8,6 +8,7 @@ class CarTypesProvider extends ChangeNotifier {
   bool isLoading = false;
 
   Future<void> getCarTypes() async {
+    if (carTypes.isNotEmpty || isLoading) return;
     isLoading = true;
     notifyListeners();
     try {
@@ -17,7 +18,7 @@ class CarTypesProvider extends ChangeNotifier {
       if (response.success) {
         carTypes.clear();
         List<dynamic> list = response.body!["body"];
-        carTypes = list.map((t){
+        carTypes = list.map((t) {
           return t.toString();
         }).toList();
       }
