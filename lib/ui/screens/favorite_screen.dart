@@ -10,12 +10,12 @@ class FavoriteScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Favorite Car"),
       ),
-      body: ListView.separated(
-        itemCount: 10,
-        padding: EdgeInsets.all(20),
-        itemBuilder: (context, index) => CarCard(),
-        separatorBuilder: (context, index) => SizedBox(height: 10,),
-      ),
+      // body: ListView.separated(
+      //   itemCount: 10,
+      //   padding: EdgeInsets.all(20),
+      //   itemBuilder: (context, index) => CarCard(),
+      //   separatorBuilder: (context, index) => SizedBox(height: 10,),
+      // ),
     );
   }
 }

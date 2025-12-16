@@ -62,15 +62,15 @@ class ViewCars extends StatelessWidget {
                 ),
               ],
             ),
-            Expanded(
-              child: ListView.separated(
-                separatorBuilder: (context, index) => SizedBox(height: 10,),
-                itemCount: 20,
-                itemBuilder: (context, index) {
-                  return CarCard();
-                },
-              ),
-            ),
+            // Expanded(
+            //   child: ListView.separated(
+            //     separatorBuilder: (context, index) => SizedBox(height: 10,),
+            //     itemCount: 20,
+            //     itemBuilder: (context, index) {
+            //       return CarCard();
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -11,15 +11,16 @@ class SearchResultScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Search Result",style: TextTheme.of(context).titleMedium,),
       ),
-      body: RefreshIndicator(
-        onRefresh: ()async{},
-        child: ListView.separated(
-          padding: EdgeInsets.all(20),
-          itemCount: 10,
-          itemBuilder: (context, index) => CarCard(),
-          separatorBuilder: (context, index) => SizedBox(height: 10,),
-        ),
-      ),
+      // body: RefreshIndicator(
+      //   onRefresh: ()async{},
+      //   child:
+      //   ListView.separated(
+      //     padding: EdgeInsets.all(20),
+      //     itemCount: 10,
+      //     itemBuilder: (context, index) => CarCard(),
+      //     separatorBuilder: (context, index) => SizedBox(height: 10,),
+      //   ),
+      // ),
     );
   }
 }

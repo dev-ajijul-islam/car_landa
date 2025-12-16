@@ -4,5 +4,5 @@ class Urls {
   static String loginUser({required String idToken}) =>
       "$baseUrl/user/login?idToken=$idToken";
   static String getFeaturedCar(int limit) =>
-      "$baseUrl/cars?limit=$limit&isFeatured=true&isActive=true";
+      "$baseUrl/cars?limit=$limit&isFeatured=true&isHotDeal=false";
 }

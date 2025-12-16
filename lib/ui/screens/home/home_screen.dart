@@ -298,7 +298,7 @@ class HomeScreen extends StatelessWidget {
                             SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           final car = featuredCarProvider.featuredCars[index];
-                          return CarCard();
+                          return CarCard(car: car,);
                         },
                       ),
                   ],
