@@ -1,5 +1,6 @@
 import 'package:car_hub/providers/single_car_provider.dart';
 import 'package:car_hub/ui/widgets/delivery_option_dialog.dart';
+import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -78,9 +79,20 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                     Stack(
                       children: [
                         Image.network(
-                          car.media.thumbnail,
-                          width: double.infinity,
+                          car.media.thumbnail.isNotEmpty
+                              ? car.media.thumbnail
+                              : 'https://via.placeholder.com/400x250',
                           fit: BoxFit.cover,
+                          width: double.maxFinite,
+                          height: 200,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              AssetsFilePaths.car2,
+                              fit: BoxFit.cover,
+                              width: double.maxFinite,
+                              height: 200,
+                            );
+                          },
                         ),
                         Positioned(
                           top: 5,

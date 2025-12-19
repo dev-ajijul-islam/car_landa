@@ -9,4 +9,5 @@ class Urls {
   static String getHotDealCar = "$baseUrl/cars?isHotDeal=true&limit=10";
   static String getCarTypes = "$baseUrl/carType";
   static String getAllCars = "$baseUrl/cars";
+  static String getCarByTitle(String title) => "$baseUrl/cars?title=$title";
 }

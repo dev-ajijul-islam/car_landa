@@ -9,10 +9,11 @@ class ViewCarsProvider extends ChangeNotifier {
   String? errorMessage;
   List<CarModel> cars = [];
 
+  // get all cars
+
   Future<void> getAllCars() async {
     isLoading = true;
     notifyListeners();
-
     try {
       NetworkResponse response = await NetworkCaller.getRequest(
         url: Urls.getAllCars,
@@ -29,12 +30,44 @@ class ViewCarsProvider extends ChangeNotifier {
         notifyListeners();
       } else {
         errorMessage = response.message;
+        notifyListeners();
       }
     } catch (e) {
       errorMessage = e.toString();
       debugPrint("cars loading failed");
     } finally {
       isLoading = false;
+    }
+  }
+
+  //search by title
+
+  Future<void> getcarByTitle({required String title}) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      NetworkResponse response = await NetworkCaller.getRequest(
+        url: Urls.getCarByTitle(title),
+      );
+      if (response.success) {
+        cars.clear();
+        errorMessage = null;
+
+        List<dynamic> list = response.body!["body"];
+        cars = list.map((c) => CarModel.fromJson(c)).toList();
+        notifyListeners();
+      } else {
+        errorMessage = response.message;
+        notifyListeners();
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+      notifyListeners();
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 }
