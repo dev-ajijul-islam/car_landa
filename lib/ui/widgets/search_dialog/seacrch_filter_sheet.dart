@@ -1,4 +1,6 @@
 import 'package:car_hub/providers/advance_search_provider.dart';
+import 'package:car_hub/providers/car_fuel_type_provider.dart';
+import 'package:car_hub/providers/car_locations_provider.dart';
 import 'package:car_hub/providers/car_models_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +11,9 @@ searchFilter(BuildContext context) {
   RangeValues carYears = RangeValues(2000, 2025);
 
   context.read<CarBrandsProvider>().getAllCarBrands();
+  context.read<CarModelsProvider>().getAllCarModels();
+  context.read<CarFuelTypeProvider>().getCarFuelTypes();
+  context.read<CarLocationsProvider>().getcarLocations();
 
   showModalBottomSheet(
     isScrollControlled: true,
@@ -62,6 +67,17 @@ searchFilter(BuildContext context) {
                           context.read<CarModelsProvider>().getAllCarModels(
                             brand: value,
                           );
+                          context.read<CarFuelTypeProvider>().getCarFuelTypes(
+                            brand: value,
+                            model: context.read<AdvanceSearchProvider>().model,
+                          );
+                          context.read<CarLocationsProvider>().getcarLocations(
+                            brand: value,
+                            model: context.read<AdvanceSearchProvider>().model,
+                            fuelType: context
+                                .read<AdvanceSearchProvider>()
+                                .model,
+                          );
                           context.read<AdvanceSearchProvider>().brand = value;
                         },
                         inputDecorationTheme: InputDecorationThemeData(
@@ -96,6 +112,17 @@ searchFilter(BuildContext context) {
                             .model,
                         onSelected: (value) {
                           context.read<AdvanceSearchProvider>().model = value;
+                          context.read<CarFuelTypeProvider>().getCarFuelTypes(
+                            brand: context.read<AdvanceSearchProvider>().brand,
+                            model: context.read<AdvanceSearchProvider>().model,
+                          );
+                          context.read<CarLocationsProvider>().getcarLocations(
+                            brand: context.read<AdvanceSearchProvider>().brand,
+                            model: context.read<AdvanceSearchProvider>().model,
+                            fuelType: context
+                                .read<AdvanceSearchProvider>()
+                                .fuelType,
+                          );
                         },
                         selectedTrailingIcon: Icon(Icons.check),
                         inputDecorationTheme: InputDecorationThemeData(
@@ -204,25 +231,38 @@ searchFilter(BuildContext context) {
                       style: TextTheme.of(context).bodyLarge,
                     ),
                   ),
-                  DropdownMenu(
-                    menuStyle: MenuStyle(
-                      fixedSize: WidgetStatePropertyAll(Size(30, 400)),
-                    ),
-                    selectedTrailingIcon: Icon(Icons.check),
-                    inputDecorationTheme: InputDecorationThemeData(
-                      filled: true,
-                      fillColor: Colors.white54,
-                    ),
-                    hintText: "Select by fuel type",
-                    width: MediaQuery.of(context).size.width,
-                    leadingIcon: Icon(Icons.hourglass_bottom),
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(value: "value", label: "Diesel"),
-                      DropdownMenuEntry(value: "value", label: "Diesel"),
-                      DropdownMenuEntry(value: "value", label: "Diesel"),
-                      DropdownMenuEntry(value: "value", label: "Diesel"),
-                      DropdownMenuEntry(value: "value", label: "Diesel"),
-                    ],
+                  Consumer<CarFuelTypeProvider>(
+                    builder: (context, provider, child) {
+                      return DropdownMenu(
+                        onSelected: (value) {
+                          context.read<AdvanceSearchProvider>().fuelType =
+                              value;
+                          context.read<CarLocationsProvider>().getcarLocations(
+                            model: context.read<AdvanceSearchProvider>().model,
+                            brand: context.read<AdvanceSearchProvider>().brand,
+                            fuelType: value,
+                          );
+                        },
+                        initialSelection: context
+                            .read<AdvanceSearchProvider>()
+                            .fuelType,
+                        selectedTrailingIcon: Icon(Icons.check),
+                        inputDecorationTheme: InputDecorationThemeData(
+                          filled: true,
+                          fillColor: Colors.white54,
+                        ),
+                        hintText: "Select by fuel type",
+                        width: MediaQuery.of(context).size.width,
+                        leadingIcon: Icon(Icons.hourglass_bottom),
+                        dropdownMenuEntries: List.generate(
+                          provider.carFuelTypes.length,
+                          (index) => DropdownMenuEntry(
+                            value: provider.carFuelTypes[index],
+                            label: provider.carFuelTypes[index],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
@@ -231,25 +271,33 @@ searchFilter(BuildContext context) {
                       style: TextTheme.of(context).bodyLarge,
                     ),
                   ),
-                  DropdownMenu(
-                    menuStyle: MenuStyle(
-                      fixedSize: WidgetStatePropertyAll(Size(30, 400)),
-                    ),
-                    selectedTrailingIcon: Icon(Icons.check),
-                    inputDecorationTheme: InputDecorationThemeData(
-                      filled: true,
-                      fillColor: Colors.white54,
-                    ),
-                    hintText: "Select by location",
-                    width: MediaQuery.of(context).size.width,
-                    leadingIcon: Icon(Icons.location_on_outlined),
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(value: "value", label: "South korea"),
-                      DropdownMenuEntry(value: "value", label: "South korea"),
-                      DropdownMenuEntry(value: "value", label: "South korea"),
-                      DropdownMenuEntry(value: "value", label: "South korea"),
-                      DropdownMenuEntry(value: "value", label: "South korea"),
-                    ],
+                  Consumer<CarLocationsProvider>(
+                    builder: (context, provider, child) {
+                      return DropdownMenu(
+                        onSelected: (value) {
+                          context.read<AdvanceSearchProvider>().location =
+                              value;
+                        },
+                        initialSelection: context
+                            .read<AdvanceSearchProvider>()
+                            .location,
+                        selectedTrailingIcon: Icon(Icons.check),
+                        inputDecorationTheme: InputDecorationThemeData(
+                          filled: true,
+                          fillColor: Colors.white54,
+                        ),
+                        hintText: "Select by location",
+                        width: MediaQuery.of(context).size.width,
+                        leadingIcon: Icon(Icons.location_on_outlined),
+                        dropdownMenuEntries: List.generate(
+                          provider.carLocations.length,
+                          (index) => DropdownMenuEntry(
+                            value: provider.carLocations[index],
+                            label: provider.carLocations[index],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

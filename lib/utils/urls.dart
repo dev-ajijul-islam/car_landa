@@ -18,6 +18,6 @@ class Urls {
     String? brand,
     String? fuelType,
     String? model,
-  ) => "$baseUrl/carFuelTypes?brand=$brand&fuelType=$fuelType&model=$model";
+  ) => "$baseUrl/carLocations?brand=$brand&fuelType=$fuelType&model=$model";
   static String getCarByTitle(String title) => "$baseUrl/cars?title=$title";
 }

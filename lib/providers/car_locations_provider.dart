@@ -17,7 +17,14 @@ class CarLocationsProvider extends ChangeNotifier {
 
     try {
       NetworkResponse response = await NetworkCaller.getRequest(
-        url: Urls.getCarFuelTypes(brand, fuelType, model),
+        url: Urls.getCarLocations(brand, fuelType, model),
+      );
+
+      print(
+        "------------------------------------------------------${brand.toString() + " " + model.toString() + " " + fuelType.toString()}",
+      );
+      print(
+        "---------------------------------------------------------${response.body}",
       );
       if (response.success) {
         carLocations.clear();
@@ -28,6 +35,7 @@ class CarLocationsProvider extends ChangeNotifier {
       debugPrint("car Locations failed $e");
     } finally {
       isLoading = false;
+      notifyListeners();
     }
   }
 }

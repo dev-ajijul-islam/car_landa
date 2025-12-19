@@ -7,16 +7,13 @@ class CarFuelTypeProvider extends ChangeNotifier {
   List<String> carFuelTypes = [];
   bool isLoading = false;
 
-  Future<void> getCarFuelTypes({
-    String? brand,
-    String? model,
-  }) async {
+  Future<void> getCarFuelTypes({String? brand, String? model}) async {
     isLoading = true;
     notifyListeners();
 
     try {
       NetworkResponse response = await NetworkCaller.getRequest(
-        url: Urls.getCarFuelTypes(brand, fuelType, model),
+        url: Urls.getCarFuelTypes(brand, model),
       );
       if (response.success) {
         carFuelTypes.clear();
@@ -27,6 +24,7 @@ class CarFuelTypeProvider extends ChangeNotifier {
       debugPrint("car fuel type failed $e");
     } finally {
       isLoading = false;
+      notifyListeners();
     }
   }
 }
