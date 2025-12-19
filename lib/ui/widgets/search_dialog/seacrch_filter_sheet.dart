@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:car_hub/providers/car_brands_provider.dart';
 
 searchFilter(BuildContext context) {
   RangeValues values = RangeValues(1000, 1000000);
   RangeValues carYears = RangeValues(2000, 2025);
+
+  context.read<CarBrandsProvider>().getAllCarBrands();
 
   showModalBottomSheet(
     isScrollControlled: true,
@@ -23,9 +27,12 @@ searchFilter(BuildContext context) {
                   Row(
                     spacing: 10,
                     children: [
-                      IconButton(onPressed: (){
-                        Navigator.pop(context);
-                      }, icon: Icon(Icons.close_outlined)),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.close_outlined),
+                      ),
                       Text("Filter", style: TextTheme.of(context).titleMedium),
                     ],
                   ),
@@ -37,21 +44,25 @@ searchFilter(BuildContext context) {
                       style: TextTheme.of(context).bodyLarge,
                     ),
                   ),
-                  DropdownMenu(
-                    inputDecorationTheme: InputDecorationThemeData(
-                      filled: true,
-                      fillColor: Colors.white54,
-                    ),
-                    hintText: "Select car brand",
-                    width: MediaQuery.of(context).size.width,
-                    leadingIcon: Icon(Icons.directions_car_outlined),
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(value: "value", label: "Land Rover"),
-                      DropdownMenuEntry(value: "value", label: "Land Rover"),
-                      DropdownMenuEntry(value: "value", label: "Land Rover"),
-                      DropdownMenuEntry(value: "value", label: "Land Rover"),
-                      DropdownMenuEntry(value: "value", label: "Land Rover"),
-                    ],
+                  Consumer<CarBrandsProvider>(
+                    builder: (context, provider, child) {
+                      return DropdownMenu(
+                        inputDecorationTheme: InputDecorationThemeData(
+                          filled: true,
+                          fillColor: Colors.white54,
+                        ),
+                        hintText: "Select car brand",
+                        width: MediaQuery.of(context).size.width,
+                        leadingIcon: Icon(Icons.directions_car_outlined),
+                        dropdownMenuEntries: List.generate(
+                          provider.carBrands.length,
+                          (index) => DropdownMenuEntry(
+                            value: provider.carBrands[index],
+                            label: provider.carBrands[index],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
