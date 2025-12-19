@@ -1,3 +1,4 @@
+import 'package:car_hub/providers/car_models_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:car_hub/providers/car_brands_provider.dart';
@@ -47,6 +48,11 @@ searchFilter(BuildContext context) {
                   Consumer<CarBrandsProvider>(
                     builder: (context, provider, child) {
                       return DropdownMenu(
+                        onSelected: (value) {
+                          context.read<CarModelsProvider>().getAllCarModels(
+                            brand: value,
+                          );
+                        },
                         inputDecorationTheme: InputDecorationThemeData(
                           filled: true,
                           fillColor: Colors.white54,
@@ -71,21 +77,25 @@ searchFilter(BuildContext context) {
                       style: TextTheme.of(context).bodyLarge,
                     ),
                   ),
-                  DropdownMenu(
-                    inputDecorationTheme: InputDecorationThemeData(
-                      filled: true,
-                      fillColor: Colors.white54,
-                    ),
-                    hintText: "Select car model",
-                    width: MediaQuery.of(context).size.width,
-                    leadingIcon: Icon(Icons.directions_car_outlined),
-                    dropdownMenuEntries: [
-                      DropdownMenuEntry(value: "value", label: "Honda CR-V"),
-                      DropdownMenuEntry(value: "value", label: "Honda CR-V"),
-                      DropdownMenuEntry(value: "value", label: "Honda CR-V"),
-                      DropdownMenuEntry(value: "value", label: "Honda CR-V"),
-                      DropdownMenuEntry(value: "value", label: "Honda CR-V"),
-                    ],
+                  Consumer<CarModelsProvider>(
+                    builder: (context, provider, child) {
+                      return DropdownMenu(
+                        inputDecorationTheme: InputDecorationThemeData(
+                          filled: true,
+                          fillColor: Colors.white54,
+                        ),
+                        hintText: "Select car model",
+                        width: MediaQuery.of(context).size.width,
+                        leadingIcon: Icon(Icons.directions_car_outlined),
+                        dropdownMenuEntries: List.generate(
+                          provider.carModels.length,
+                          (index) => DropdownMenuEntry(
+                            value: provider.carModels[index],
+                            label: provider.carModels[index],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(height: 10),
                   Padding(
