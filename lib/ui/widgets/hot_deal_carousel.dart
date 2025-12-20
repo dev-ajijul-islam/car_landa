@@ -50,14 +50,15 @@ class HotDealCarousel extends StatelessWidget {
 
                             Container(
                               padding: const EdgeInsets.all(15),
-                              decoration: const BoxDecoration(color: Colors.black26),
+                              decoration: const BoxDecoration(
+                                color: Colors.black26,
+                              ),
                               child: Align(
                                 alignment: Alignment.topCenter,
                                 child: Text(
                                   "Hot Deal",
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Colors.white,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(color: Colors.white),
                                 ),
                               ),
                             ),
