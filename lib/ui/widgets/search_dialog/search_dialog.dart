@@ -1,4 +1,6 @@
+import 'package:car_hub/data/model/car_model.dart';
 import 'package:car_hub/providers/advance_search_provider.dart';
+import 'package:car_hub/ui/screens/home/car_details_screen.dart';
 import 'package:car_hub/ui/screens/home/search_result_screen.dart';
 import 'package:car_hub/ui/widgets/search_dialog/seacrch_filter_sheet.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
@@ -14,6 +16,7 @@ void searchDialog(BuildContext context) {
     Navigator.pushNamed(context, SearchResultScreen.name);
   }
 
+  TextEditingController _searchController = TextEditingController();
   showDialog(
     barrierColor: Colors.transparent,
     useSafeArea: true,
@@ -29,11 +32,21 @@ void searchDialog(BuildContext context) {
               children: [
                 Row(
                   children: [
+                    IconButton(
+                      color: ColorScheme.of(context).primary,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.close_outlined),
+                    ),
                     Expanded(
                       child: TextField(
+                        controller: _searchController,
                         onSubmitted: (value) => onSubmit(),
-                        onChanged: (value) async{
-                          await context.read<AdvanceSearchProvider>().getCarsByFiltering(title: value);
+                        onChanged: (value) async {
+                          await context
+                              .read<AdvanceSearchProvider>()
+                              .getCarsByFiltering(title: value);
                         },
                         autofocus: true,
                         decoration: InputDecoration(
@@ -49,10 +62,13 @@ void searchDialog(BuildContext context) {
                     ),
                     IconButton(
                       color: ColorScheme.of(context).primary,
-                      onPressed: () {
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        _searchController.clear();
+                        await context
+                            .read<AdvanceSearchProvider>()
+                            .getCarsByFiltering(title: _searchController.text);
                       },
-                      icon: Icon(Icons.close_outlined),
+                      icon: Icon(Icons.restore_rounded),
                     ),
                   ],
                 ),
@@ -63,30 +79,41 @@ void searchDialog(BuildContext context) {
                 ),
                 SizedBox(height: 30),
                 Expanded(
-                  child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        minVerticalPadding: 0,
-                        title: Text("Audi RS Q8 TFSI"),
+                  child: Consumer<AdvanceSearchProvider>(
+                    builder: (context, provider, child) {
+                      return ListView.separated(
+                        itemBuilder: (context, index) {
+                          CarModel car = provider.searchedCars[index];
+                          return ListTile(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                CarDetailsScreen.name,
+                                arguments: car.sId,
+                              );
+                            },
+                            minVerticalPadding: 0,
+                            title: Text(car.title),
 
-                        trailing: Text(
-                          "\$2400",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: ColorScheme.of(context).primary,
-                          ),
-                        ),
-                        tileColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        leading: Image.asset(AssetsFilePaths.car2, width: 50),
+                            tileColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                car.media.thumbnail,
+                                width: 50,
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return SizedBox(height: 10);
+                        },
+                        itemCount: provider.searchedCars.length.clamp(0, 10),
                       );
                     },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 10);
-                    },
-                    itemCount: 5,
                   ),
                 ),
               ],
