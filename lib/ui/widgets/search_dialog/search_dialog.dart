@@ -101,9 +101,20 @@ void searchDialog(BuildContext context) {
                             ),
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                car.media.thumbnail,
-                                width: 50,
+                              child:     Image.network(
+                                car.media.thumbnail.isNotEmpty
+                                    ? car.media.thumbnail
+                                    : 'https://via.placeholder.com/400x250',
+
+                                width: 58,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AssetsFilePaths.car1,
+                                    fit: BoxFit.cover,
+                                    width: 58,
+
+                                  );
+                                },
                               ),
                             ),
                           );
