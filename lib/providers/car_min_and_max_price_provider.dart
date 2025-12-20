@@ -3,29 +3,25 @@ import 'package:car_hub/data/network/network_response.dart';
 import 'package:car_hub/utils/urls.dart';
 import 'package:flutter/material.dart';
 
-class CarLocationsProvider extends ChangeNotifier {
-  List<String> carLocations = [];
+class CarMinAndMaxPriceProvider extends ChangeNotifier {
   bool isLoading = false;
+  Map<String, dynamic> minAndMaxPrice = {};
 
-  Future<void> getcarLocations({
-    String? brand,
-    String? model,
-    String? fuelType,
-  }) async {
+  Future<void> getMinAndMaxPrice({String? brand}) async {
     isLoading = true;
     notifyListeners();
 
     try {
       NetworkResponse response = await NetworkCaller.getRequest(
-        url: Urls.getCarLocations(brand, fuelType, model),
+        url: Urls.getMinAdMaxPrice,
       );
       if (response.success) {
-        carLocations.clear();
-        List<dynamic> list = response.body!["body"];
-        carLocations = list.map((c) => c.toString()).toList();
+        minAndMaxPrice.clear();
+        Map<dynamic, dynamic> obj = response.body!["body"];
+        minAndMaxPrice = obj as Map<String, dynamic>;
       }
     } catch (e) {
-      debugPrint("car Locations failed $e");
+      debugPrint("car max and min price loading failed $e");
     } finally {
       isLoading = false;
       notifyListeners();

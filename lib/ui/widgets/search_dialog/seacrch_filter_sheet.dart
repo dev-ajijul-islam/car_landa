@@ -1,19 +1,34 @@
 import 'package:car_hub/providers/advance_search_provider.dart';
 import 'package:car_hub/providers/car_fuel_type_provider.dart';
 import 'package:car_hub/providers/car_locations_provider.dart';
+import 'package:car_hub/providers/car_min_and_max_price_provider.dart';
+import 'package:car_hub/providers/car_min_and_max_year_provider.dart';
 import 'package:car_hub/providers/car_models_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:car_hub/providers/car_brands_provider.dart';
 
 searchFilter(BuildContext context) {
-  RangeValues values = RangeValues(1000, 1000000);
-  RangeValues carYears = RangeValues(2000, 2025);
-
   context.read<CarBrandsProvider>().getAllCarBrands();
   context.read<CarModelsProvider>().getAllCarModels();
   context.read<CarFuelTypeProvider>().getCarFuelTypes();
   context.read<CarLocationsProvider>().getcarLocations();
+  context.read<CarMinAndMaxPriceProvider>().getMinAndMaxPrice();
+  context.read<CarMinAndMaxYearProvider>().getMinAndMaxYear();
+
+  // --- পরিবর্তন এখানে: Provider থেকে ডাটা নিয়ে Initializing করা হয়েছে ---
+  final advProvider = context.read<AdvanceSearchProvider>();
+
+  RangeValues priceValues = RangeValues(
+    advProvider.minPrice?.toDouble() ?? 100,
+    advProvider.maxPrice?.toDouble() ?? 100000,
+  );
+
+  RangeValues yearValues = RangeValues(
+    advProvider.minYear?.toDouble() ?? 2000,
+    advProvider.maxYear?.toDouble() ?? 2025,
+  );
+  // -----------------------------------------------------------------
 
   showModalBottomSheet(
     isScrollControlled: true,
@@ -150,78 +165,130 @@ searchFilter(BuildContext context) {
                       style: TextTheme.of(context).bodyLarge,
                     ),
                   ),
+
                   Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 10,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: Consumer<CarMinAndMaxPriceProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.isLoading ||
+                            provider.minAndMaxPrice.isEmpty) {
+                          return const SizedBox(
+                            height: 100,
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        double min =
+                            double.tryParse(
+                              provider.minAndMaxPrice["min"].toString(),
+                            ) ??
+                            0;
+                        double max =
+                            double.tryParse(
+                              provider.minAndMaxPrice["max"].toString(),
+                            ) ??
+                            100000;
+
+                        RangeValues safePrice = RangeValues(
+                          priceValues.start.clamp(min, max),
+                          priceValues.end.clamp(min, max),
+                        );
+
+                        return Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
                             children: [
-                              Text(
-                                "\$${values.start.toStringAsFixed(0)}",
-                                style: TextTheme.of(context).bodyLarge,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("\$${safePrice.start.round()}"),
+                                  Text("\$${safePrice.end.round()}"),
+                                ],
                               ),
-                              Text(
-                                "\$${values.end.toStringAsFixed(0)}",
-                                style: TextTheme.of(context).bodyLarge,
+                              RangeSlider(
+                                min: min,
+                                max: max,
+                                values: safePrice,
+                                onChanged: (val) {
+                                  setState(() => priceValues = val);
+                                  context
+                                      .read<AdvanceSearchProvider>()
+                                      .maxPrice = val.end
+                                      .toInt(); // Fixed logic here
+                                  context
+                                      .read<AdvanceSearchProvider>()
+                                      .minPrice = val.start
+                                      .toInt(); // Fixed logic here
+                                },
                               ),
                             ],
                           ),
-                          RangeSlider(
-                            max: 1000000,
-                            min: 1000,
-                            values: values,
-                            onChanged: (value) {
-                              setState(() {
-                                values = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
                     child: Text("Year", style: TextTheme.of(context).bodyLarge),
                   ),
+
                   Card(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 10,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: Consumer<CarMinAndMaxYearProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.isLoading ||
+                            provider.minAndMaxYear.isEmpty) {
+                          return const SizedBox(
+                            height: 100,
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        double min =
+                            double.tryParse(
+                              provider.minAndMaxYear["min"].toString(),
+                            ) ??
+                            1990;
+                        double max =
+                            double.tryParse(
+                              provider.minAndMaxYear["max"].toString(),
+                            ) ??
+                            2025;
+
+                        RangeValues safeYear = RangeValues(
+                          yearValues.start.clamp(min, max),
+                          yearValues.end.clamp(min, max),
+                        );
+
+                        return Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
                             children: [
-                              Text(
-                                carYears.start.toStringAsFixed(0),
-                                style: TextTheme.of(context).bodyLarge,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("${safeYear.start.round()}"),
+                                  Text("${safeYear.end.round()}"),
+                                ],
                               ),
-                              Text(
-                                carYears.end.toStringAsFixed(0),
-                                style: TextTheme.of(context).bodyLarge,
+                              RangeSlider(
+                                min: min,
+                                max: max,
+                                values: safeYear,
+                                onChanged: (val) {
+                                  setState(() => yearValues = val);
+                                  context
+                                      .read<AdvanceSearchProvider>()
+                                      .maxYear = val.end
+                                      .toInt(); // Fixed logic here
+                                  context
+                                      .read<AdvanceSearchProvider>()
+                                      .minYear = val.start
+                                      .toInt(); // Fixed logic here
+                                },
                               ),
                             ],
                           ),
-                          RangeSlider(
-                            max: 2025,
-                            min: 2000,
-                            values: carYears,
-                            onChanged: (value) {
-                              setState(() {
-                                carYears = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
                   Padding(

@@ -14,4 +14,6 @@ class AdvanceSearchProvider extends ChangeNotifier {
   String? location;
 
 
+
+
 }

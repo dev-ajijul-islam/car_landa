@@ -10,6 +10,8 @@ class Urls {
   static String getCarTypes = "$baseUrl/carType";
   static String getAllCars = "$baseUrl/cars";
   static String getCarBrands = "$baseUrl/carBrands";
+  static String getMinAdMaxPrice = "$baseUrl/carMinAndMaxPrice";
+  static String getMinAndMaxYear = "$baseUrl/carMinAndMaxYear";
   static String getCarModels(String? brand) =>
       "$baseUrl/carModels?brand=$brand";
   static String getCarFuelTypes(String? brand, String? model) =>

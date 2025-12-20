@@ -3,6 +3,8 @@ import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/providers/car_brands_provider.dart';
 import 'package:car_hub/providers/car_fuel_type_provider.dart';
 import 'package:car_hub/providers/car_locations_provider.dart';
+import 'package:car_hub/providers/car_min_and_max_price_provider.dart';
+import 'package:car_hub/providers/car_min_and_max_year_provider.dart';
 import 'package:car_hub/providers/car_models_provider.dart';
 import 'package:car_hub/providers/car_types_provider.dart';
 import 'package:car_hub/providers/featured_car_provider.dart';
@@ -61,6 +63,8 @@ class CarHub extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AdvanceSearchProvider()),
         ChangeNotifierProvider(create: (_) => CarFuelTypeProvider()),
         ChangeNotifierProvider(create: (_) => CarLocationsProvider()),
+        ChangeNotifierProvider(create: (_)=> CarMinAndMaxYearProvider()),
+        ChangeNotifierProvider(create: (_)=> CarMinAndMaxPriceProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
