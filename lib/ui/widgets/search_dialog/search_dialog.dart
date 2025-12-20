@@ -1,7 +1,9 @@
+import 'package:car_hub/providers/advance_search_provider.dart';
 import 'package:car_hub/ui/screens/home/search_result_screen.dart';
 import 'package:car_hub/ui/widgets/search_dialog/seacrch_filter_sheet.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void searchDialog(BuildContext context) {
   void onTapFilterButton() {
@@ -30,6 +32,9 @@ void searchDialog(BuildContext context) {
                     Expanded(
                       child: TextField(
                         onSubmitted: (value) => onSubmit(),
+                        onChanged: (value) async{
+                          await context.read<AdvanceSearchProvider>().getCarsByFiltering(title: value);
+                        },
                         autofocus: true,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.search_outlined),

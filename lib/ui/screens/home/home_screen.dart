@@ -44,6 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           await context.read<FeaturedCarProvider>().getFeaturedCar();
+          await context.read<HotDealCarProvider>().getHotDealCar();
+          await context.read<CarTypesProvider>().getCarTypes();
         },
         child: MediaQuery.removePadding(
           context: context,
@@ -84,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Consumer<FeaturedCarProvider>(
                       builder: (context, provider, child) {
                         if (provider.isLoading) {
-                          return CircularProgressIndicator();
+                          return Center(child: CircularProgressIndicator());
                         }
                         return ListView.builder(
                           shrinkWrap: true,

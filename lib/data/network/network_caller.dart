@@ -22,7 +22,7 @@ class NetworkCaller {
         return NetworkResponse(
           statusCode: response.statusCode,
           success: false,
-          message: "something went wrong",
+          message: "something went wrong ${response.body}",
         );
       }
     } catch (e) {

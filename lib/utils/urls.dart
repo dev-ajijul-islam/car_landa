@@ -7,6 +7,34 @@ class Urls {
       "$baseUrl/cars?limit=$limit&isFeatured=true&isHotDeal=false";
   static String carById(String id) => "$baseUrl/cars/$id";
   static String getHotDealCar = "$baseUrl/cars?isHotDeal=true&limit=10";
+  static String getCarsByFilter({
+    String? model,
+    String? brand,
+    String? location,
+    int? minPrice,
+    int? maxPrice,
+    int? maxYear,
+    int? minYear,
+    String? fuelType,
+    String? title,
+  }) {
+
+    final Map<String, dynamic> queryParams = {
+      if (model != null) 'model': model,
+      if (brand != null) 'brand': brand,
+      if (location != null) 'location': location,
+      if (minPrice != null) 'minPrice': minPrice.toString(),
+      if (maxPrice != null) 'maxPrice': maxPrice.toString(),
+      if (minYear != null) 'minYear': minYear.toString(),
+      if (maxYear != null) 'maxYear': maxYear.toString(),
+      if (fuelType != null) 'fuelType': fuelType,
+      if (title != null && title.isNotEmpty) 'title': title,
+    };
+
+    final uri = Uri.parse("$baseUrl/cars").replace(queryParameters: queryParams);
+
+    return uri.toString();
+  }
   static String getCarTypes = "$baseUrl/carType";
   static String getAllCars = "$baseUrl/cars";
   static String getCarBrands = "$baseUrl/carBrands";
