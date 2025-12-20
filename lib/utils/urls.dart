@@ -36,6 +36,7 @@ class Urls {
     return uri.toString();
   }
   static String getCarTypes = "$baseUrl/carType";
+  static String getCarByTypeId(String carTypeId) => "$baseUrl/cars?carTypeId=$carTypeId";
   static String getAllCars = "$baseUrl/cars";
   static String getCarBrands = "$baseUrl/carBrands";
   static String getMinAdMaxPrice = "$baseUrl/carMinAndMaxPrice";
