@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:car_hub/data/model/user_model.dart';
 import 'package:car_hub/data/network/network_caller.dart';
 import 'package:car_hub/data/network/network_response.dart';
 import 'package:car_hub/ui/main_layout.dart';
