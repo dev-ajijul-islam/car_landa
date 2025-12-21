@@ -50,13 +50,13 @@ class LanguageSelectScreen extends StatelessWidget {
 
                 buildLanguageTile(
                   context: context,
-                  flag: "https://flagcdn.com/w40/us.png",
+                  flag: "assets/images/us.png",
                   value: "en_US",
                   name: "English",
                 ),
                 buildLanguageTile(
                   context: context,
-                  flag: "https://flagcdn.com/w40/bd.png",
+                  flag: "assets/images/bd.png",
                   value: "bn",
                   name: "Bangla",
                 ),
@@ -108,7 +108,7 @@ class LanguageSelectScreen extends StatelessWidget {
       child: Row(
         spacing: 10,
         children: [
-          Image.network(flag, width: 30, height: 30),
+          Image.asset(flag, width: 30, height: 30),
           Expanded(child: Text(name)),
           Consumer<LanguageProvider>(
             builder: (context, state, child) => Radio(
