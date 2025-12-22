@@ -6,10 +6,16 @@ import 'package:http/http.dart';
 class NetworkCaller {
   /// ==============================Get Request=======================================
 
-  static Future<NetworkResponse> getRequest({required String url}) async {
+  static Future<NetworkResponse> getRequest({
+    required String url,
+    String? token,
+  }) async {
     Uri uri = Uri.parse(url);
     try {
-      Response response = await get(uri);
+      Response response = await get(
+        uri,
+        headers: {"Content-TYpe": "application/json", "token": token ?? ""},
+      );
       final decodedData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         return NetworkResponse(
@@ -37,15 +43,16 @@ class NetworkCaller {
 
   /// ==============================Post Request=======================================
 
-  static Future<NetworkResponse> postRequest(
-    String url,
-    Map<String, dynamic> body,
-  ) async {
+  static Future<NetworkResponse> postRequest({
+    required String url,
+    required Map<String, dynamic> body,
+    String? token,
+  }) async {
     Uri uri = Uri.parse(url);
     try {
       Response response = await post(
         uri,
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json","token" : token?? ""},
         body: jsonEncode(body),
       );
 

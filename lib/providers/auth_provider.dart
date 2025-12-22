@@ -16,7 +16,7 @@ class AuthProvider extends ChangeNotifier {
   bool inProgress = false;
 
   User? currentUser;
-
+  String? idToken;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ///================================= Sign up with email & password ===========================
@@ -39,11 +39,11 @@ class AuthProvider extends ChangeNotifier {
       final user = credential.user;
       if (user == null) return false;
 
-      final response = await NetworkCaller.postRequest(Urls.createUser, {
-        "name": name,
-        "email": email,
-        "authenticatedBy": "credentials",
-      });
+      final response = await NetworkCaller.postRequest(
+        url: Urls.createUser,
+        body: {"name": name, "email": email, "authenticatedBy": "credentials"},
+        token: idToken,
+      );
 
       if (!response.success) {
         await user.delete();
@@ -154,11 +154,15 @@ class AuthProvider extends ChangeNotifier {
 
       if (userCredential.user == null) return false;
 
-      final response = await NetworkCaller.postRequest(Urls.createUser, {
-        "name": userCredential.user?.displayName,
-        "email": userCredential.user?.email,
-        "authenticatedBy": "google",
-      });
+      final response = await NetworkCaller.postRequest(
+        body: {
+          "name": userCredential.user?.displayName,
+          "email": userCredential.user?.email,
+          "authenticatedBy": "google",
+        },
+        url: Urls.createUser,
+        token: idToken,
+      );
 
       if (!response.success) {
         await userCredential.user?.delete();
@@ -198,8 +202,9 @@ class AuthProvider extends ChangeNotifier {
   ///================================= Watch current user ===========================
 
   void _watchCurrentUser() {
-    _auth.authStateChanges().listen((User? user) {
+    _auth.authStateChanges().listen((User? user) async {
       currentUser = user;
+      idToken = await user?.getIdToken();
       notifyListeners();
     });
   }
