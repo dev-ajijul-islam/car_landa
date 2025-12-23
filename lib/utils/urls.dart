@@ -55,4 +55,5 @@ class Urls {
   ) => "$baseUrl/carLocations?brand=$brand&fuelType=$fuelType&model=$model";
   static String getCarByTitle(String title) => "$baseUrl/cars?title=$title";
   static String createFavorite = "$baseUrl/favorite";
+  static String getFavoriteCars = "$baseUrl/favorite";
 }
