@@ -1,7 +1,10 @@
 import 'package:car_hub/data/model/car_model.dart';
+import 'package:car_hub/providers/favorite_provider.dart';
 import 'package:car_hub/ui/screens/home/car_details_screen.dart';
+import 'package:car_hub/ui/widgets/loading.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CarCard extends StatefulWidget {
   final CarModel car;
@@ -118,15 +121,25 @@ class _CarCardState extends State<CarCard> {
                   Positioned(
                     top: 5,
                     right: 0,
-                    child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isFav = !isFav;
-                        });
-                      },
-                      icon: Icon(
-                        isFav ? Icons.favorite : Icons.favorite_border_outlined,
-                        color: ColorScheme.of(context).primary,
+                    child: Consumer<FavoriteProvider>(
+                      builder: (context, provider, child) => IconButton(
+                        onPressed: () async {
+                          setState(() {
+                            isFav = !isFav;
+                          });
+                          final response = await provider.createFavorite(
+                            carId: car.sId,
+                          );
+                          print("------------------------------------${response.body}");
+                        },
+                        icon: provider.isLoading
+                            ? Loading()
+                            : Icon(
+                                isFav
+                                    ? Icons.favorite
+                                    : Icons.favorite_border_outlined,
+                                color: ColorScheme.of(context).primary,
+                              ),
                       ),
                     ),
                   ),

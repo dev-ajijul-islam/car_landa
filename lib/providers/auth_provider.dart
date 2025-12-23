@@ -16,7 +16,7 @@ class AuthProvider extends ChangeNotifier {
   bool inProgress = false;
 
   User? currentUser;
-  String? idToken;
+  static String? idToken;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ///================================= Sign up with email & password ===========================

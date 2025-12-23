@@ -8,6 +8,7 @@ import 'package:car_hub/providers/car_min_and_max_price_provider.dart';
 import 'package:car_hub/providers/car_min_and_max_year_provider.dart';
 import 'package:car_hub/providers/car_models_provider.dart';
 import 'package:car_hub/providers/car_types_provider.dart';
+import 'package:car_hub/providers/favorite_provider.dart';
 import 'package:car_hub/providers/featured_car_provider.dart';
 import 'package:car_hub/providers/hot_deal_car_provider.dart';
 import 'package:car_hub/providers/language_provider.dart';
@@ -68,6 +69,7 @@ class CarHub extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CarMinAndMaxYearProvider()),
         ChangeNotifierProvider(create: (_) => CarMinAndMaxPriceProvider()),
         ChangeNotifierProvider(create: (context) => CarByTypesProvider()),
+        ChangeNotifierProvider(create: (context) => FavoriteProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
