@@ -12,7 +12,7 @@ class CarModel {
   final Costs costs;
   final String carTypeId;
   final String description;
-  final String? isFavorite;
+  bool ? isFavorite;
   final InquiryContacts inquiryContacts;
 
   CarModel({
@@ -48,7 +48,7 @@ class CarModel {
       costs: Costs.fromJson(json['costs'] ?? {}),
       carTypeId: json['carTypeId']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
-      isFavorite: json['isFavorite']?.toString() ?? '',
+      isFavorite: json['isFavorite'] ?? '',
       inquiryContacts: InquiryContacts.fromJson(json['inquiryContacts'] ?? {}),
     );
   }

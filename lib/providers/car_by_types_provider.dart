@@ -1,6 +1,7 @@
 import 'package:car_hub/data/model/car_model.dart';
 import 'package:car_hub/data/network/network_caller.dart';
 import 'package:car_hub/data/network/network_response.dart';
+import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/utils/urls.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -14,6 +15,7 @@ class CarByTypesProvider extends ChangeNotifier {
     try {
       NetworkResponse response = await NetworkCaller.getRequest(
         url: Urls.getCarByTypeId(carTypeId),
+        token: AuthProvider.idToken
       );
       if(response.success){
         cars.clear();

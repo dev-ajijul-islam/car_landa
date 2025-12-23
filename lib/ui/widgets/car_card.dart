@@ -146,7 +146,7 @@ class _CarCardState extends State<CarCard> {
                         icon: provider.isLoading
                             ? Loading()
                             : Icon(
-                                isFav
+                                car.isFavorite == true
                                     ? Icons.favorite
                                     : Icons.favorite_border_outlined,
                                 color: ColorScheme.of(context).primary,

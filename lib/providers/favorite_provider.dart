@@ -48,8 +48,6 @@ class FavoriteProvider extends ChangeNotifier {
         url: Urls.getFavoriteCars,
         token: AuthProvider.idToken
       );
-
-      print(response.body);
       if (response.success) {
         favoriteCars.clear();
         List<dynamic> list = response.body!["body"];
