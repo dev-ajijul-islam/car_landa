@@ -18,7 +18,6 @@ class Urls {
     String? fuelType,
     String? title,
   }) {
-
     final Map<String, dynamic> queryParams = {
       if (model != null) 'model': model,
       if (brand != null) 'brand': brand,
@@ -31,12 +30,16 @@ class Urls {
       if (title != null && title.isNotEmpty) 'title': title,
     };
 
-    final uri = Uri.parse("$baseUrl/cars").replace(queryParameters: queryParams);
+    final uri = Uri.parse(
+      "$baseUrl/cars",
+    ).replace(queryParameters: queryParams);
 
     return uri.toString();
   }
+
   static String getCarTypes = "$baseUrl/carType";
-  static String getCarByTypeId(String carTypeId) => "$baseUrl/cars?carTypeId=$carTypeId";
+  static String getCarByTypeId(String carTypeId) =>
+      "$baseUrl/cars?carTypeId=$carTypeId";
   static String getAllCars = "$baseUrl/cars";
   static String getCarBrands = "$baseUrl/carBrands";
   static String getMinAdMaxPrice = "$baseUrl/carMinAndMaxPrice";
@@ -51,4 +54,5 @@ class Urls {
     String? model,
   ) => "$baseUrl/carLocations?brand=$brand&fuelType=$fuelType&model=$model";
   static String getCarByTitle(String title) => "$baseUrl/cars?title=$title";
+  static String createFavorite = "$baseUrl/favorite";
 }
