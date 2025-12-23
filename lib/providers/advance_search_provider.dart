@@ -1,6 +1,7 @@
 import 'package:car_hub/data/model/car_model.dart';
 import 'package:car_hub/data/network/network_caller.dart';
 import 'package:car_hub/data/network/network_response.dart';
+import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/utils/urls.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -35,7 +36,10 @@ class AdvanceSearchProvider extends ChangeNotifier {
         title: title,
       );
 
-      NetworkResponse response = await NetworkCaller.getRequest(url: filterUrl);
+      NetworkResponse response = await NetworkCaller.getRequest(
+        url: filterUrl,
+        token: AuthProvider.idToken,
+      );
       if (response.success) {
         final List<dynamic>? list = response.body?["body"];
         if (list != null) {

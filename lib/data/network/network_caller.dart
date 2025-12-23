@@ -52,15 +52,49 @@ class NetworkCaller {
     try {
       Response response = await post(
         uri,
-        headers: {"Content-Type": "application/json","token" : token?? ""},
+        headers: {"Content-Type": "application/json", "token": token ?? ""},
         body: jsonEncode(body),
       );
 
       final decodedData = jsonDecode(response.body);
-
-      print(decodedData);
-
       if (response.statusCode == 201) {
+        return NetworkResponse(
+          statusCode: response.statusCode,
+          success: true,
+          message: decodedData["message"],
+          body: decodedData,
+        );
+      } else {
+        return NetworkResponse(
+          statusCode: response.statusCode,
+          success: false,
+          message: decodedData["message"],
+        );
+      }
+    } catch (e) {
+      return NetworkResponse(
+        statusCode: null,
+        success: false,
+        message: "Something wrong",
+      );
+    }
+  }
+
+  /// ==============================Delete Request=======================================
+
+  static Future<NetworkResponse> deleteRequest({
+    required String url,
+    String? token,
+  }) async {
+    Uri uri = Uri.parse(url);
+    try {
+      Response response = await delete(
+        uri,
+        headers: {"Content-Type": "application/json", "token": token ?? ""},
+      );
+
+      final decodedData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
         return NetworkResponse(
           statusCode: response.statusCode,
           success: true,
