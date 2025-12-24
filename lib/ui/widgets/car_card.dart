@@ -20,12 +20,15 @@ class CarCard extends StatefulWidget {
 class _CarCardState extends State<CarCard> {
   @override
   Widget build(BuildContext context) {
+    // ১. SingleCarProvider থেকে ডেটা ওয়াচ করা হচ্ছে ইনস্ট্যান্ট টগলের জন্য
     final providerCar = context.watch<SingleCarProvider>().car;
 
+    // ২. আইডি ম্যাচ করলে প্রোভাইডারের আপডেটেড কার দেখাবে, নাহলে ইনিশিয়াল কার
     final car = (providerCar != null && providerCar.sId == widget.car.sId)
         ? providerCar
         : widget.car;
 
+    // ৩. প্রাইস ও ডিসকাউন্ট ক্যালকুলেশন
     final hasDiscount = car.pricing.discount != null;
     final discount = car.pricing.discount;
 
@@ -67,6 +70,8 @@ class _CarCardState extends State<CarCard> {
                       height: 200,
                     ),
                   ),
+
+                  // Badges
                   if (car.flags.isHotDeal)
                     _buildBadge("HOT DEAL", Colors.red)
                   else if (car.flags.isFeatured)
@@ -78,20 +83,17 @@ class _CarCardState extends State<CarCard> {
                     right: 0,
                     child: Consumer<FavoriteProvider>(
                       builder: (context, favProvider, child) {
-                        final isSingleCarLoading = context
-                            .watch<SingleCarProvider>()
-                            .loading;
+                        final isSingleCarLoading = context.watch<SingleCarProvider>().loading;
 
                         return IconButton(
                           onPressed: () async {
                             final bool currentlyFav = car.isFavorite ?? false;
+
+                            // ফেভারিট এপিআই কল
                             final response = currentlyFav
-                                ? await favProvider.deleteFavorite(
-                                    carId: car.sId,
-                                  )
-                                : await favProvider.createFavorite(
-                                    carId: car.sId,
-                                  );
+                                ? await favProvider.deleteFavorite(carId: car.sId)
+                                : await favProvider.createFavorite(carId: car.sId);
+
                             if (!context.mounted) return;
 
                             if (response.success) {
@@ -101,12 +103,8 @@ class _CarCardState extends State<CarCard> {
                                 color: Colors.green,
                               );
 
-                              context.read<SingleCarProvider>().getCarById(
-                                car.sId,
-                              );
-                              context
-                                  .read<FavoriteProvider>()
-                                  .getFavoriteCars();
+                              // 🔥 এই কলটি অন্য সব স্ক্রিনে (Home/Details) আইকন টগল নিশ্চিত করবে
+                              context.read<SingleCarProvider>().getCarById(car.sId);
                             } else {
                               showSnackbarMessage(
                                 context: context,
@@ -117,16 +115,16 @@ class _CarCardState extends State<CarCard> {
                           },
                           icon: (favProvider.isLoading || isSingleCarLoading)
                               ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: Loading(),
-                                )
+                            width: 20,
+                            height: 20,
+                            child: Loading(),
+                          )
                               : Icon(
-                                  car.isFavorite == true
-                                      ? Icons.favorite
-                                      : Icons.favorite_border_outlined,
-                                  color: Theme.of(context).primaryColor,
-                                ),
+                            car.isFavorite == true
+                                ? Icons.favorite
+                                : Icons.favorite_border_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
                         );
                       },
                     ),
@@ -135,10 +133,7 @@ class _CarCardState extends State<CarCard> {
               ),
 
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 13,
-                  vertical: 10,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -185,9 +180,7 @@ class _CarCardState extends State<CarCard> {
                       children: [
                         Text("Year : ${car.year}"),
                         const SizedBox(width: 15),
-                        Text(
-                          "Mileage : ${car.specs.mileageKm.toStringAsFixed(0)}km",
-                        ),
+                        Text("Mileage : ${car.specs.mileageKm.toStringAsFixed(0)}km"),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -222,11 +215,7 @@ class _CarCardState extends State<CarCard> {
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -248,9 +237,7 @@ class _CarCardState extends State<CarCard> {
     return Expanded(
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           padding: const EdgeInsets.symmetric(vertical: 8),
         ),
         onPressed: enabled ? () {} : null,
