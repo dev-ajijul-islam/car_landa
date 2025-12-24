@@ -31,11 +31,9 @@ class _CarCardState extends State<CarCard> {
 
     double discountAmount = 0;
     if (hasDiscount && discount != null) {
-      if (discount.type == "percentage") {
-        discountAmount = car.pricing.originalPrice * (discount.value / 100);
-      } else {
-        discountAmount = discount.value.toDouble();
-      }
+      discountAmount = (discount.type == "percentage")
+          ? car.pricing.originalPrice * (discount.value / 100)
+          : discount.value.toDouble();
     }
     final finalPrice = car.pricing.originalPrice - discountAmount;
 
@@ -45,7 +43,7 @@ class _CarCardState extends State<CarCard> {
       },
       child: Card(
         clipBehavior: Clip.hardEdge,
-        margin: EdgeInsets.all(0),
+        margin: EdgeInsets.zero,
         color: Colors.white,
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
@@ -62,86 +60,53 @@ class _CarCardState extends State<CarCard> {
                     fit: BoxFit.cover,
                     width: double.maxFinite,
                     height: 200,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        AssetsFilePaths.car2,
-                        fit: BoxFit.cover,
-                        width: double.maxFinite,
-                        height: 200,
-                      );
-                    },
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      AssetsFilePaths.car2,
+                      fit: BoxFit.cover,
+                      width: double.maxFinite,
+                      height: 200,
+                    ),
                   ),
-
-                  // Hot deal badge
                   if (car.flags.isHotDeal)
-                    Positioned(
-                      top: 10,
-                      left: 10,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "HOT DEAL",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  // Featured badge
-                  if (car.flags.isFeatured && !car.flags.isHotDeal)
-                    Positioned(
-                      top: 10,
-                      left: 10,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "FEATURED",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildBadge("HOT DEAL", Colors.red)
+                  else if (car.flags.isFeatured)
+                    _buildBadge("FEATURED", Colors.blue),
 
                   // Favorite button
                   Positioned(
                     top: 5,
                     right: 0,
                     child: Consumer<FavoriteProvider>(
-                      builder: (context, provider, child) => IconButton(
-                        onPressed: () async {
-                          if (car.isFavorite == true) {
-                            final response = await provider.deleteFavorite(
-                              carId: car.sId,
-                            );
+                      builder: (context, favProvider, child) {
+                        final isSingleCarLoading = context
+                            .watch<SingleCarProvider>()
+                            .loading;
+
+                        return IconButton(
+                          onPressed: () async {
+                            final bool currentlyFav = car.isFavorite ?? false;
+                            final response = currentlyFav
+                                ? await favProvider.deleteFavorite(
+                                    carId: car.sId,
+                                  )
+                                : await favProvider.createFavorite(
+                                    carId: car.sId,
+                                  );
+                            if (!context.mounted) return;
+
                             if (response.success) {
                               showSnackbarMessage(
                                 context: context,
                                 message: response.message,
                                 color: Colors.green,
                               );
+
                               context.read<SingleCarProvider>().getCarById(
                                 car.sId,
                               );
+                              context
+                                  .read<FavoriteProvider>()
+                                  .getFavoriteCars();
                             } else {
                               showSnackbarMessage(
                                 context: context,
@@ -149,39 +114,21 @@ class _CarCardState extends State<CarCard> {
                                 color: Colors.red,
                               );
                             }
-                          } else {
-                            final response = await provider.createFavorite(
-                              carId: car.sId,
-                            );
-                            if (response.success) {
-                              showSnackbarMessage(
-                                context: context,
-                                message: response.message,
-                                color: Colors.green,
-                              );
-                              context.read<SingleCarProvider>().getCarById(
-                                car.sId,
-                              );
-                            } else {
-                              showSnackbarMessage(
-                                context: context,
-                                message: response.message,
-                                color: Colors.red,
-                              );
-                            }
-                          }
-                        },
-                        icon:
-                            (provider.isLoading ||
-                                context.watch<SingleCarProvider>().loading)
-                            ? Loading()
-                            : Icon(
-                                car.isFavorite == true
-                                    ? Icons.favorite
-                                    : Icons.favorite_border_outlined,
-                                color: ColorScheme.of(context).primary,
-                              ),
-                      ),
+                          },
+                          icon: (favProvider.isLoading || isSingleCarLoading)
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Loading(),
+                                )
+                              : Icon(
+                                  car.isFavorite == true
+                                      ? Icons.favorite
+                                      : Icons.favorite_border_outlined,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -193,11 +140,8 @@ class _CarCardState extends State<CarCard> {
                   vertical: 10,
                 ),
                 child: Column(
-                  spacing: 5,
-                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title and Price row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,142 +149,112 @@ class _CarCardState extends State<CarCard> {
                         Expanded(
                           child: Text(
                             "${car.brand} . ${car.model} . ${car.year}",
-                            style: TextTheme.of(context).titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            // Original price with strikethrough if discount exists
                             if (hasDiscount)
                               Text(
                                 "${car.pricing.currency} ${car.pricing.originalPrice.toStringAsFixed(0)}",
-                                style: TextTheme.of(context).bodyMedium
-                                    ?.copyWith(
-                                      decoration: TextDecoration.lineThrough,
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
+                                style: const TextStyle(
+                                  decoration: TextDecoration.lineThrough,
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            // Final price
                             Text(
                               "${car.pricing.currency} ${finalPrice.toStringAsFixed(0)}",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: ColorScheme.of(context).primary,
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
-                            // Discount percentage
-                            if (hasDiscount && discount?.type == "percentage")
-                              Text(
-                                "${discount?.value}% OFF",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
                           ],
                         ),
                       ],
                     ),
-
-                    SizedBox(height: 5),
-
-                    // Specs row
+                    const SizedBox(height: 10),
                     Row(
-                      spacing: 15,
                       children: [
                         Text("Year : ${car.year}"),
+                        const SizedBox(width: 15),
                         Text(
                           "Mileage : ${car.specs.mileageKm.toStringAsFixed(0)}km",
                         ),
                       ],
                     ),
-
-                    // Location row
+                    const SizedBox(height: 5),
                     Row(
                       children: [
-                        Icon(Icons.location_on_outlined, size: 16),
-                        SizedBox(width: 4),
-                        Text(
-                          "${car.location.city}, ${car.location.country}",
-                          style: TextStyle(fontSize: 14),
-                        ),
+                        const Icon(Icons.location_on_outlined, size: 16),
+                        const SizedBox(width: 4),
+                        Text("${car.location.city}, ${car.location.country}"),
                       ],
                     ),
-
-                    SizedBox(height: 10),
-
-                    // Action buttons
-                    Row(
-                      spacing: 10,
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            onPressed: () {
-                              // Call functionality
-                              if (car.inquiryContacts.call) {
-                                // Implement call logic
-                              }
-                            },
-                            child: Icon(Icons.phone_outlined, size: 20),
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            onPressed: () {
-                              // Message functionality
-                              if (car.inquiryContacts.message) {
-                                // Implement message logic
-                              }
-                            },
-                            child: Icon(Icons.message, size: 20),
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            onPressed: () {
-                              // WhatsApp functionality
-                              if (car.inquiryContacts.whatsapp) {}
-                            },
-                            child: Icon(Icons.whatshot, size: 20),
-                          ),
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 15),
+                    _buildActionButtons(car),
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBadge(String text, Color color) {
+    return Positioned(
+      top: 10,
+      left: 10,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(CarModel car) {
+    return Row(
+      children: [
+        _expandedButton(Icons.phone_outlined, car.inquiryContacts.call),
+        const SizedBox(width: 8),
+        _expandedButton(Icons.message, car.inquiryContacts.message),
+        const SizedBox(width: 8),
+        _expandedButton(Icons.whatshot, car.inquiryContacts.whatsapp),
+      ],
+    );
+  }
+
+  Widget _expandedButton(IconData icon, bool enabled) {
+    return Expanded(
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+        ),
+        onPressed: enabled ? () {} : null,
+        child: Icon(icon, size: 20),
       ),
     );
   }
