@@ -1,5 +1,6 @@
 import 'package:car_hub/data/model/car_model.dart';
 import 'package:car_hub/providers/favorite_provider.dart';
+import 'package:car_hub/providers/single_car_provider.dart';
 import 'package:car_hub/ui/screens/home/car_details_screen.dart';
 import 'package:car_hub/ui/widgets/loading.dart';
 import 'package:car_hub/ui/widgets/show_snackbar_message.dart';
@@ -17,11 +18,14 @@ class CarCard extends StatefulWidget {
 }
 
 class _CarCardState extends State<CarCard> {
-  bool isFav = false;
-
   @override
   Widget build(BuildContext context) {
-    final car = widget.car;
+    final providerCar = context.watch<SingleCarProvider>().car;
+
+    final car = (providerCar != null && providerCar.sId == widget.car.sId)
+        ? providerCar
+        : widget.car;
+
     final hasDiscount = car.pricing.discount != null;
     final discount = car.pricing.discount;
 
@@ -125,25 +129,51 @@ class _CarCardState extends State<CarCard> {
                     child: Consumer<FavoriteProvider>(
                       builder: (context, provider, child) => IconButton(
                         onPressed: () async {
-                          setState(() {
-                            isFav = !isFav;
-                          });
-                          final response = await provider.createFavorite(
-                            carId: car.sId,
-                          );
-                          if (response.success) {
-                            showSnackbarMessage(
-                              context: context,
-                              message: response.message,
+                          if (car.isFavorite == true) {
+                            final response = await provider.deleteFavorite(
+                              carId: car.sId,
                             );
+                            if (response.success) {
+                              showSnackbarMessage(
+                                context: context,
+                                message: response.message,
+                                color: Colors.green,
+                              );
+                              context.read<SingleCarProvider>().getCarById(
+                                car.sId,
+                              );
+                            } else {
+                              showSnackbarMessage(
+                                context: context,
+                                message: response.message,
+                                color: Colors.red,
+                              );
+                            }
                           } else {
-                            showSnackbarMessage(
-                              context: context,
-                              message: response.message,
+                            final response = await provider.createFavorite(
+                              carId: car.sId,
                             );
+                            if (response.success) {
+                              showSnackbarMessage(
+                                context: context,
+                                message: response.message,
+                                color: Colors.green,
+                              );
+                              context.read<SingleCarProvider>().getCarById(
+                                car.sId,
+                              );
+                            } else {
+                              showSnackbarMessage(
+                                context: context,
+                                message: response.message,
+                                color: Colors.red,
+                              );
+                            }
                           }
                         },
-                        icon: provider.isLoading
+                        icon:
+                            (provider.isLoading ||
+                                context.watch<SingleCarProvider>().loading)
                             ? Loading()
                             : Icon(
                                 car.isFavorite == true

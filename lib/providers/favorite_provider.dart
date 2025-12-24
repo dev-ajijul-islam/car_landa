@@ -82,6 +82,9 @@ class FavoriteProvider extends ChangeNotifier {
         success: false,
         message: "deleting favorite failed $e",
       );
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 }

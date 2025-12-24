@@ -1,5 +1,8 @@
+import 'package:car_hub/providers/favorite_provider.dart';
 import 'package:car_hub/providers/single_car_provider.dart';
 import 'package:car_hub/ui/widgets/delivery_option_dialog.dart';
+import 'package:car_hub/ui/widgets/loading.dart';
+import 'package:car_hub/ui/widgets/show_snackbar_message.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,17 +16,14 @@ class CarDetailsScreen extends StatefulWidget {
 }
 
 class _CarDetailsScreenState extends State<CarDetailsScreen> {
-  bool isFav = false;
-
-
   @override
   void initState() {
     _loadInitialData();
     super.initState();
   }
 
-  _loadInitialData(){
-    WidgetsBinding.instance.addPostFrameCallback((_){
+  _loadInitialData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final carId = ModalRoute.of(context)!.settings.arguments as String;
       context.read<SingleCarProvider>().getCarById(carId);
     });
@@ -35,18 +35,13 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     final car = provider.car;
 
     if (provider.loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (car == null) {
-      return const Scaffold(
-        body: Center(child: Text("Car not found")),
-      );
+      return const Scaffold(body: Center(child: Text("Car not found")));
     }
 
-    /// 🔹 Key specs mapped from model
     final specs = [
       _spec("Mileage", "${car.specs.mileageKm} km"),
       _spec("Engine Power", "${car.specs.enginePowerHp} HP"),
@@ -61,9 +56,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(car.title),
-      ),
+      appBar: AppBar(title: Text(car.title)),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -94,18 +87,46 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                             );
                           },
                         ),
-                        Positioned(
-                          top: 5,
-                          right: 0,
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() => isFav = !isFav);
-                            },
-                            icon: Icon(
-                              isFav
-                                  ? Icons.favorite
-                                  : Icons.favorite_border_outlined,
-                              color: Theme.of(context).colorScheme.primary,
+                        Consumer<SingleCarProvider>(
+                          builder: (context, provider, child) => Positioned(
+                            top: 5,
+                            right: 0,
+                            child: IconButton(
+                              onPressed: () async {
+                                if (car.isFavorite == true) {
+                                  final response = await context
+                                      .read<FavoriteProvider>()
+                                      .deleteFavorite(carId: car.sId);
+                                  context.read<SingleCarProvider>().getCarById(
+                                    car.sId,
+                                  );
+                                  showSnackbarMessage(
+                                    context: context,
+                                    message: response.message,
+                                  );
+                                } else {
+                                 final response =  await context
+                                      .read<FavoriteProvider>()
+                                      .createFavorite(carId: car.sId);
+                                  context.read<SingleCarProvider>().getCarById(
+                                    car.sId,
+                                  );
+                                 showSnackbarMessage(
+                                   context: context,
+                                   message: response.message,
+                                 );
+                                }
+                              },
+                              icon: provider.loading
+                                  ? Loading()
+                                  : Icon(
+                                      car.isFavorite == true
+                                          ? Icons.favorite
+                                          : Icons.favorite_border_outlined,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
                             ),
                           ),
                         ),
@@ -121,9 +142,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           Expanded(
                             child: Text(
                               car.title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
                           Column(
@@ -133,15 +152,15 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                 Text(
                                   "\$${car.pricing.originalPrice}",
                                   style: const TextStyle(
-                                    decoration:
-                                    TextDecoration.lineThrough,
+                                    decoration: TextDecoration.lineThrough,
                                     color: Colors.grey,
                                   ),
                                 ),
                               Text(
                                 "\$${car.pricing.sellingPrice} ${car.pricing.currency}",
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -152,7 +171,10 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                     /// LOCATION + YEAR
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 12, right: 12, bottom: 10),
+                        left: 12,
+                        right: 12,
+                        bottom: 10,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -186,8 +208,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: specs.length,
-                gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 2.4,
                 ),
@@ -197,14 +218,12 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                     children: [
                       Text(
                         specs[i]["title"]!,
-                        style: TextStyle(
-                            fontSize: 13, color: Colors.grey[600]),
+                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         specs[i]["value"]!,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       const Divider(),
                     ],
@@ -215,10 +234,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
               const SizedBox(height: 10),
 
               /// DESCRIPTION
-              Text(
-                "Details",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text("Details", style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 6),
               Text(car.description),
 
@@ -234,6 +250,8 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     );
   }
 
-  Map<String, String> _spec(String title, String value) =>
-      {"title": title, "value": value};
+  Map<String, String> _spec(String title, String value) => {
+    "title": title,
+    "value": value,
+  };
 }
