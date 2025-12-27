@@ -5,28 +5,37 @@ import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/utils/urls.dart';
 import 'package:flutter/material.dart';
 
-class CreateOrderProvider extends ChangeNotifier {
+class TrackCarProvider extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
-  bool isSuccess = false;
+  List<OrderModel> userOrders = [];
 
-  Future<void> createOrder(OrderModel order) async {
+
+  Future<void> getMyOrders() async {
     isLoading = true;
-    isSuccess = false;
     errorMessage = null;
     notifyListeners();
 
     try {
-      NetworkResponse response = await NetworkCaller.postRequest(
-        url: Urls.createOrder, //
+
+      NetworkResponse response = await NetworkCaller.getRequest(
+        url: Urls.getMyOrders,
         token: AuthProvider.idToken,
-        body: order.toJson(),
       );
 
       if (response.success) {
-        isSuccess = true;
+        userOrders.clear();
+
+        if (response.body?["body"] is List) {
+          List<dynamic> list = response.body!["body"];
+          for (var item in list) {
+            if (item is Map<String, dynamic>) {
+              userOrders.add(OrderModel.fromJson(item));
+            }
+          }
+        }
       } else {
-        errorMessage = response.body?["message"] ?? "Failed to create order";
+        errorMessage = response.body?["message"] ?? "Failed to load orders";
       }
     } catch (e) {
       errorMessage = "An error occurred: ${e.toString()}";
@@ -34,11 +43,5 @@ class CreateOrderProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
-  }
-
-  void resetStatus() {
-    isSuccess = false;
-    errorMessage = null;
-    notifyListeners();
   }
 }

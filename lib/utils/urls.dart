@@ -57,5 +57,6 @@ class Urls {
   static String createFavorite = "$baseUrl/favorite";
   static String getFavoriteCars = "$baseUrl/favorite";
   static String deleteFavoriteCar(carId) => "$baseUrl/favorite/delete/$carId";
-  static String createOrder ="$baseUrl/order";
+  static String createOrder = "$baseUrl/orders";
+  static String getMyOrders = "$baseUrl/orders";
 }
