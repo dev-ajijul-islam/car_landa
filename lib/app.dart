@@ -8,11 +8,14 @@ import 'package:car_hub/providers/car_min_and_max_price_provider.dart';
 import 'package:car_hub/providers/car_min_and_max_year_provider.dart';
 import 'package:car_hub/providers/car_models_provider.dart';
 import 'package:car_hub/providers/car_types_provider.dart';
+import 'package:car_hub/providers/create_order_provider.dart';
 import 'package:car_hub/providers/favorite_provider.dart';
 import 'package:car_hub/providers/featured_car_provider.dart';
 import 'package:car_hub/providers/hot_deal_car_provider.dart';
 import 'package:car_hub/providers/language_provider.dart';
+import 'package:car_hub/providers/order_tracking_provider.dart';
 import 'package:car_hub/providers/single_car_provider.dart';
+import 'package:car_hub/providers/track_car_provider.dart';
 import 'package:car_hub/providers/view_cars_provider.dart';
 import 'package:car_hub/ui/main_layout.dart';
 import 'package:car_hub/ui/screens/auth/profile_setup/set_profile_picture.dart';
@@ -70,6 +73,9 @@ class CarHub extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CarMinAndMaxPriceProvider()),
         ChangeNotifierProvider(create: (context) => CarByTypesProvider()),
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
+        ChangeNotifierProvider(create: (_) => CreateOrderProvider()),
+        ChangeNotifierProvider(create: (_) => TrackCarProvider()),
+        ChangeNotifierProvider(create: (_) => OrderTrackingProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

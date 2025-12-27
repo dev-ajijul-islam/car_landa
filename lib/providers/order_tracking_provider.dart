@@ -9,9 +9,7 @@ class OrderTrackingProvider extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-
   List<TrackingStatusModel> trackingTimeline = [];
-
 
   String? currentOrderId;
 
@@ -22,7 +20,6 @@ class OrderTrackingProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-
       NetworkResponse response = await NetworkCaller.getRequest(
         url: Urls.getTrackingStatus(orderIdOrCode),
         token: AuthProvider.idToken,
@@ -31,8 +28,8 @@ class OrderTrackingProvider extends ChangeNotifier {
       if (response.success) {
         currentOrderId = orderIdOrCode;
 
-
-        if (response.body?["body"] != null && response.body!["body"]["statusList"] is List) {
+        if (response.body?["body"] != null &&
+            response.body!["body"]["statusList"] is List) {
           List<dynamic> list = response.body!["body"]["statusList"];
 
           for (var item in list) {
