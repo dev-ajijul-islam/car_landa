@@ -19,7 +19,6 @@ class TrackingStatusModel {
     this.isLast = false,
   });
 
-
   factory TrackingStatusModel.fromJson(Map<String, dynamic> json) {
     return TrackingStatusModel(
       title: json['title'] ?? '',
@@ -32,7 +31,6 @@ class TrackingStatusModel {
       isLast: json['isLast'] ?? false,
     );
   }
-
 
   Map<String, dynamic> toJson() {
     return {

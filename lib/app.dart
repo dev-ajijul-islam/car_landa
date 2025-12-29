@@ -57,8 +57,8 @@ class CarHub extends StatelessWidget {
     Color primary = Color(0xFF930405);
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => LanguageProvider()),
-        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => FeaturedCarProvider()),
         ChangeNotifierProvider(create: (_) => SingleCarProvider()),
         ChangeNotifierProvider(create: (_) => HotDealCarProvider()),
@@ -71,8 +71,8 @@ class CarHub extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CarLocationsProvider()),
         ChangeNotifierProvider(create: (_) => CarMinAndMaxYearProvider()),
         ChangeNotifierProvider(create: (_) => CarMinAndMaxPriceProvider()),
-        ChangeNotifierProvider(create: (context) => CarByTypesProvider()),
-        ChangeNotifierProvider(create: (context) => FavoriteProvider()),
+        ChangeNotifierProvider(create: (_) => CarByTypesProvider()),
+        ChangeNotifierProvider(create: (_) => FavoriteProvider()),
         ChangeNotifierProvider(create: (_) => CreateOrderProvider()),
         ChangeNotifierProvider(create: (_) => TrackCarProvider()),
         ChangeNotifierProvider(create: (_) => OrderTrackingProvider()),

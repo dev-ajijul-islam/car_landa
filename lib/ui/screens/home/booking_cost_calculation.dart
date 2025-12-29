@@ -1,3 +1,4 @@
+import 'package:car_hub/data/model/car_model.dart';
 import 'package:car_hub/ui/screens/home/payment_screen.dart';
 import 'package:car_hub/ui/widgets/common_dialog.dart';
 import 'package:flutter/material.dart';
@@ -8,15 +9,26 @@ class BookingCostCalculation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final CarModel car = args['car'];
+
+    final double carPrice = car.pricing.sellingPrice.toDouble();
+    final double shipping = car.costs.shipping.toDouble();
+    final double total = carPrice + shipping;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Car cost")),
+      appBar: AppBar(title: const Text("Car cost")),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           spacing: 20,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Cost Summary", style: TextTheme.of(context).titleMedium),
+            Text(
+              "Cost Summary",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             Card(
               color: Colors.white,
               elevation: 0,
@@ -30,11 +42,11 @@ class BookingCostCalculation extends StatelessWidget {
                       children: [
                         Text(
                           "Car price",
-                          style: TextTheme.of(context).bodyLarge,
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          "\$25000",
-                          style: TextTheme.of(context).bodyLarge,
+                          "\$$carPrice",
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
@@ -43,25 +55,25 @@ class BookingCostCalculation extends StatelessWidget {
                       children: [
                         Text(
                           "Shipping",
-                          style: TextTheme.of(context).bodyLarge,
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          "\$2400",
-                          style: TextTheme.of(context).bodyLarge,
+                          "\$$shipping",
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
-                    Divider(color: Colors.grey),
+                    const Divider(color: Colors.grey),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Total price",
-                          style: TextTheme.of(context).bodyLarge,
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          "\$27400",
-                          style: TextTheme.of(context).bodyLarge,
+                          "\$$total",
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
@@ -72,11 +84,12 @@ class BookingCostCalculation extends StatelessWidget {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: FilledButton(
-                  onPressed: () {
-                    _onTapBookNowButton(context);
-                  },
-                  child: Text("Book now"),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () => _onTapBookNowButton(context, args, total),
+                    child: const Text("Book now"),
+                  ),
                 ),
               ),
             ),
@@ -86,15 +99,24 @@ class BookingCostCalculation extends StatelessWidget {
     );
   }
 
-  void _onTapBookNowButton(BuildContext context) {
+  void _onTapBookNowButton(
+    BuildContext context,
+    Map<String, dynamic> args,
+    double totalPrice,
+  ) {
     commonDialog(
       context,
       title: "Booking Request Done",
       subtitle:
           "Your booking request has been sent. Once the admin accepts your request, you will be able to make the payment",
     );
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.pushNamed(context, PaymentScreen.name);
+
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pushNamed(
+        context,
+        PaymentScreen.name,
+        arguments: {...args, 'totalPrice': totalPrice},
+      );
     });
   }
 }

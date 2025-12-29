@@ -1,6 +1,7 @@
+import 'package:car_hub/data/model/car_model.dart';
 import 'package:car_hub/providers/favorite_provider.dart';
 import 'package:car_hub/providers/single_car_provider.dart';
-import 'package:car_hub/ui/widgets/delivery_option_dialog.dart';
+import 'package:car_hub/ui/screens/home/delivery_info_screen.dart';
 import 'package:car_hub/ui/widgets/loading.dart';
 import 'package:car_hub/ui/widgets/show_snackbar_message.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
@@ -32,7 +33,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar টাইটেল আপডেট করার জন্য Consumer
       appBar: AppBar(
         title: Consumer<SingleCarProvider>(
           builder: (context, provider, _) => Text(provider.car?.title ?? ""),
@@ -42,7 +42,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
         builder: (context, provider, child) {
           final car = provider.car;
 
-          // প্রথমে ডেটা না থাকলে শুধু তখন পুরো স্ক্রিনে লোডিং দেখাবে
           if (car == null) {
             return const Center(child: Loading());
           }
@@ -90,61 +89,69 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                 );
                               },
                             ),
-
-                            // শুধুমাত্র ফেভারিট বাটনের জন্য লোডিং লজিক
                             Positioned(
                               top: 5,
                               right: 0,
                               child: Consumer<FavoriteProvider>(
                                 builder: (context, favProvider, child) {
-                                  // বাটনে লোডিং দেখাবে যদি Favorite API অথবা SingleCar সিঙ্কিং চলে
-                                  bool isLoading = favProvider.isLoading || provider.loading;
-
+                                  bool isLoading =
+                                      favProvider.isLoading || provider.loading;
                                   return IconButton(
-                                    onPressed: isLoading ? null : () async {
-                                      final isFav = car.isFavorite ?? false;
-                                      final response = isFav
-                                          ? await favProvider.deleteFavorite(carId: car.sId)
-                                          : await favProvider.createFavorite(carId: car.sId);
+                                    onPressed: isLoading
+                                        ? null
+                                        : () async {
+                                            final isFav =
+                                                car.isFavorite ?? false;
+                                            final response = isFav
+                                                ? await favProvider
+                                                      .deleteFavorite(
+                                                        carId: car.sId,
+                                                      )
+                                                : await favProvider
+                                                      .createFavorite(
+                                                        carId: car.sId,
+                                                      );
 
-                                      if (!context.mounted) return;
+                                            if (!context.mounted) return;
 
-                                      if (response.success) {
-                                        showSnackbarMessage(
-                                          context: context,
-                                          message: response.message,
-                                          color: Colors.green,
-                                        );
-                                        // ডেটা আপডেট করা (বাটনে লোডিং ট্রিগার করবে)
-                                        context.read<SingleCarProvider>().getCarById(car.sId);
-                                      } else {
-                                        showSnackbarMessage(
-                                          context: context,
-                                          message: response.message,
-                                          color: Colors.red,
-                                        );
-                                      }
-                                    },
+                                            if (response.success) {
+                                              showSnackbarMessage(
+                                                context: context,
+                                                message: response.message,
+                                                color: Colors.green,
+                                              );
+                                              context
+                                                  .read<SingleCarProvider>()
+                                                  .getCarById(car.sId);
+                                            } else {
+                                              showSnackbarMessage(
+                                                context: context,
+                                                message: response.message,
+                                                color: Colors.red,
+                                              );
+                                            }
+                                          },
                                     icon: isLoading
                                         ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Loading() // এখানে আপনার কাস্টম লোডিং উইজেট
-                                    )
+                                            width: 20,
+                                            height: 20,
+                                            child: Loading(),
+                                          )
                                         : Icon(
-                                      car.isFavorite == true
-                                          ? Icons.favorite
-                                          : Icons.favorite_border_outlined,
-                                      color: Theme.of(context).colorScheme.primary,
-                                    ),
+                                            car.isFavorite == true
+                                                ? Icons.favorite
+                                                : Icons
+                                                      .favorite_border_outlined,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
                                   );
                                 },
                               ),
                             ),
                           ],
                         ),
-
-                        /// TITLE + PRICE
                         Padding(
                           padding: const EdgeInsets.all(12),
                           child: Row(
@@ -153,7 +160,9 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                               Expanded(
                                 child: Text(
                                   car.title,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
                                 ),
                               ),
                               Column(
@@ -178,8 +187,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                             ],
                           ),
                         ),
-
-                        /// LOCATION + YEAR
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 12,
@@ -192,7 +199,10 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                               Text("Year : ${car.year}"),
                               Row(
                                 children: [
-                                  const Icon(Icons.location_on_outlined, size: 18),
+                                  const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 18,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     "${car.location.city}, ${car.location.country}",
@@ -205,31 +215,31 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  /// KEY SPECIFICATIONS
                   Text(
                     "Key Specification",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 10),
-
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: specs.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 2.4,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 2.4,
+                        ),
                     itemBuilder: (_, i) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             specs[i]["title"]!,
-                            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey[600],
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -241,19 +251,18 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                       );
                     },
                   ),
-
                   const SizedBox(height: 10),
-
-                  /// DESCRIPTION
-                  Text("Details", style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    "Details",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 6),
                   Text(car.description),
-
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton(
-                      onPressed: () => deliveryDialog(context),
+                      onPressed: () => _showDeliveryDialog(context, car),
                       child: const Text("Buy Now"),
                     ),
                   ),
@@ -262,6 +271,85 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showDeliveryDialog(BuildContext context, CarModel car) {
+    String? deliveryOption = "Luanda";
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Delivery Options"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _deliveryRadio(
+                    title: "Delivered to Luanda",
+                    value: "Luanda",
+                    groupValue: deliveryOption,
+                    onChanged: (val) => setState(() => deliveryOption = val),
+                  ),
+                  const SizedBox(height: 10),
+                  _deliveryRadio(
+                    title: "Delivered to Doorstep",
+                    value: "Doorstep",
+                    groupValue: deliveryOption,
+                    onChanged: (val) => setState(() => deliveryOption = val),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          DeliveryInfoScreen.name,
+                          arguments: {
+                            'car': car,
+                            'deliveryOption': deliveryOption,
+                          },
+                        );
+                      },
+                      child: const Text("Continue"),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _deliveryRadio({
+    required String title,
+    required String value,
+    required String? groupValue,
+    required Function(String) onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title),
+          Radio(
+            value: value,
+            groupValue: groupValue,
+            onChanged: (v) => onChanged(v.toString()),
+          ),
+        ],
       ),
     );
   }

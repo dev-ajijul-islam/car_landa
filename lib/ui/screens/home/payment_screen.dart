@@ -1,4 +1,6 @@
 import 'package:car_hub/ui/screens/home/delivery_info_screen.dart';
+import 'package:car_hub/ui/screens/track_car/track_car.dart';
+import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
 import 'package:car_hub/ui/widgets/common_dialog.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
@@ -12,19 +14,30 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String? paymentMethod;
+  String? paymentMethod = "ssl-commerz";
+  late Map<String, dynamic> allOrderData;
+
+  @override
+  void didChangeDependencies() {
+    allOrderData =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Payment")),
+      appBar: AppBar(title: const Text("Payment")),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Payment Option", style: TextTheme.of(context).titleMedium),
-            SizedBox(height: 10),
+            Text(
+              "Payment Option",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 10),
             Card(
               elevation: 0,
               color: Colors.white,
@@ -40,19 +53,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           groupValue: paymentMethod,
                           onChanged: (value) {
                             setState(() {
-                              paymentMethod = value;
+                              paymentMethod = value.toString();
                             });
                           },
                         ),
-                        Text("Pay with Credit card"),
+                        const Text("Pay with SSLCommerz"),
                       ],
                     ),
-                    Image.asset(width: 80, AssetsFilePaths.creditCard),
+                    Image.asset(width: 60, AssetsFilePaths.creditCard),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -60,7 +73,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Card(
                     color: Colors.white,
                     child: Padding(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 20,
@@ -72,79 +85,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               Icon(
                                 Icons.food_bank_outlined,
                                 size: 30,
-                                color: ColorScheme.of(context).primary,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                               Text(
                                 "Bank Details for Payment",
-                                style: TextTheme.of(context).titleMedium,
+                                style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ],
                           ),
-                          RichText(
-                            text: TextSpan(
-                              text: "Name : ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: "LISTAUTO ANGOLA COMERCIO",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: "Bank Account : ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: "13439833710001",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: "Bank Name : ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: "MILLENIUM ATLÂNTICO",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: "iban : ",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: "0055 0000 3439 8337 1015 4",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
+                          _buildRichText("Name : ", "LISTAUTO ANGOLA COMERCIO"),
+                          _buildRichText("Bank Account : ", "13439833710001"),
+                          _buildRichText("Bank Name : ", "MILLENIUM ATLÂNTICO"),
+                          _buildRichText(
+                            "iban : ",
+                            "0055 0000 3439 8337 1015 4",
                           ),
                         ],
                       ),
                     ),
                   ),
-                  FilledButton(onPressed: _onTapPayButton, child: Text("Pay")),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: _onTapPayButton,
+                      child: const Text("Pay Now"),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -154,15 +120,38 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  _onTapPayButton() {
+  Widget _buildRichText(String label, String value) {
+    return RichText(
+      text: TextSpan(
+        text: label,
+        style: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w600,
+        ),
+        children: [
+          TextSpan(
+            text: value,
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onTapPayButton() {
     commonDialog(
       context,
       title: "Payment Successful",
       subtitle:
           "Payment confirmed! We’ve started processing your car delivery.",
     );
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.pushNamed(context, DeliveryInfoScreen.name);
+
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pushNamed(
+        context,
+        TrackingProgress.name,
+        arguments: {...allOrderData, 'paymentMethod': paymentMethod},
+      );
     });
   }
 }
