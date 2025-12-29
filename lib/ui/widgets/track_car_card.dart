@@ -41,7 +41,12 @@ class _TrackCarCardState extends State<TrackCarCard> {
                       fit: BoxFit.fill,
                       width: double.maxFinite,
                     )
-                  : Image.network(widget.order.carData!["media"]["thumbnail"]),
+                  : Image.network(
+                      widget.order.carData!["media"]["thumbnail"],
+                      fit: BoxFit.fill,
+                      width: double.maxFinite,
+                      height: 220,
+                    ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 13,
@@ -124,7 +129,7 @@ class _TrackCarCardState extends State<TrackCarCard> {
                     ),
                     Row(
                       children: [
-                        const Icon(Icons.location_on_outlined, size: 16),
+                        const Icon(Icons.location_on_outlined, size: 20),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
