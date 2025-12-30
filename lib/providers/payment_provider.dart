@@ -38,8 +38,8 @@ class PaymentProvider extends ChangeNotifier {
     try {
       final sslcommerz = Sslcommerz(
         initializer: SSLCommerzInitialization(
-          store_id: "testbox",
-          store_passwd: "qwerty",
+          store_id: "carla69540721933be",
+          store_passwd: "carla69540721933be@ssl",
           total_amount: totalAmount,
           tran_id: "${orderId}_${DateTime.now().millisecondsSinceEpoch}",
           currency: SSLCurrencyType.BDT,

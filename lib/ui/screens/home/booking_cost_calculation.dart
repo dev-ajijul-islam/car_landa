@@ -15,8 +15,7 @@ class BookingCostCalculation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final CarModel car = args['car'];
     final String deliveryOption = args['deliveryOption'];
     final String fullName = args['fullName'];
@@ -135,17 +134,16 @@ class BookingCostCalculation extends StatelessWidget {
   }
 
   void _onTapBookNowButton(
-    BuildContext context,
-    CarModel car,
-    String deliveryOption,
-    double totalPrice,
-    String fullName,
-    String email,
-    String phone,
-    String location,
-    CreateOrderProvider orderProvider,
-  ) async {
-    // Get current user from AuthProvider
+      BuildContext context,
+      CarModel car,
+      String deliveryOption,
+      double totalPrice,
+      String fullName,
+      String email,
+      String phone,
+      String location,
+      CreateOrderProvider orderProvider,
+      ) async {
     final user = context.read<AuthProvider>().currentUser;
     if (user == null) {
       showSnackbarMessage(
@@ -156,7 +154,6 @@ class BookingCostCalculation extends StatelessWidget {
       return;
     }
 
-    // Create OrderModel
     final order = OrderModel(
       carId: car.sId,
       userId: user.uid,
@@ -170,18 +167,17 @@ class BookingCostCalculation extends StatelessWidget {
       location: location,
     );
 
-    // Call CreateOrderProvider
     await orderProvider.createOrder(order);
 
-    if (orderProvider.isSuccess) {
-      // Show success dialog
+    if (orderProvider.isSuccess && orderProvider.createdOrder != null) {
+      final createdOrder = orderProvider.createdOrder!;
+
       commonDialog(
         context,
         title: "Order Created Successfully",
         subtitle: "Your order has been placed. Proceed to payment.",
       );
 
-      // Navigate to PaymentScreen after delay
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushNamed(
           context,
@@ -194,15 +190,12 @@ class BookingCostCalculation extends StatelessWidget {
             'phone': phone,
             'location': location,
             'totalPrice': totalPrice,
-            'order': order,
+            'order': createdOrder,
           },
         );
-
-        // Reset provider status
         orderProvider.resetStatus();
       });
     } else if (orderProvider.errorMessage != null) {
-      // Show error message
       showSnackbarMessage(
         context: context,
         message: orderProvider.errorMessage!,

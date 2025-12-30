@@ -1,6 +1,8 @@
 import 'package:car_hub/providers/payment_provider.dart';
+import 'package:car_hub/ui/screens/home/delivery_info_screen.dart';
+import 'package:car_hub/ui/screens/track_car/track_car.dart';
 import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
-
+import 'package:car_hub/ui/widgets/common_dialog.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +21,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   void didChangeDependencies() {
-    allOrderData =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    allOrderData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     super.didChangeDependencies();
   }
 
@@ -79,9 +80,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         spacing: 20,
                         children: [
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 10,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Icon(
                                 Icons.payment,
@@ -94,18 +94,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                             ],
                           ),
-                          _buildRichText(
-                            "Selected Method : ",
-                            "SSLCommerz Online Payment",
-                          ),
-                          _buildRichText(
-                            "Order Amount : ",
-                            "\$${allOrderData['totalPrice']}",
-                          ),
-                          _buildRichText(
-                            "Order ID : ",
-                            "#${allOrderData['order']?.sId?.substring(0, 8) ?? 'N/A'}",
-                          ),
+                          _buildRichText("Selected Method : ", "SSLCommerz Online Payment"),
+                          _buildRichText("Order Amount : ", "\$${allOrderData['totalPrice']}"),
+                          _buildRichText("Order ID : ", "#${allOrderData['order']?.sId?.substring(0, 8) ?? 'N/A'}"),
                           _buildRichText(
                             "Note : ",
                             "Complete payment to proceed with car delivery",
@@ -141,11 +132,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           Navigator.pushNamed(
                             context,
                             TrackingProgress.name,
-                            arguments: {
-                              ...allOrderData,
-                              'paymentMethod': paymentMethod,
-                              'transactionId': paymentProvider.transactionId,
-                            },
+                            arguments: allOrderData['order']?.sId,
                           );
                           paymentProvider.reset();
                         });
@@ -175,8 +162,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: FilledButton(
-                                onPressed: () =>
-                                    _processPayment(paymentProvider),
+                                onPressed: () => _processPayment(paymentProvider),
                                 style: FilledButton.styleFrom(
                                   backgroundColor: Colors.red,
                                 ),
@@ -237,8 +223,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final car = allOrderData['car'];
     final order = allOrderData['order'];
 
+    if (order == null || order.sId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Order information missing'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     paymentProvider.processPayment(
-      orderId: order.sId,
+      orderId: order.sId!,
       totalAmount: allOrderData['totalPrice'],
       customerName: allOrderData['fullName'],
       customerEmail: allOrderData['email'],

@@ -2,8 +2,8 @@ import 'package:car_hub/data/model/car_model.dart';
 
 class OrderModel {
   final String? sId;
-  final String carId; // String ID হিসেবে store করার জন্য
-  final Map<String, dynamic>? carData; // Populated car data এর জন্য
+  final String carId;
+  final Map<String, dynamic>? carData;
   final String userId;
   final String deliveryOption;
   final double totalAmount;
@@ -14,6 +14,9 @@ class OrderModel {
   final String phone;
   final String location;
   final DateTime? createdAt;
+  final String? paymentTransactionId;
+  final DateTime? paymentDate;
+  final bool? ipnValidated;
 
   OrderModel({
     this.sId,
@@ -29,24 +32,24 @@ class OrderModel {
     required this.phone,
     required this.location,
     this.createdAt,
+    this.paymentTransactionId,
+    this.paymentDate,
+    this.ipnValidated,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     String carId = '';
     Map<String, dynamic>? carData;
 
-    // Handle both cases: carId as String or as Object (populated)
     if (json['carId'] is String) {
       carId = json['carId'];
     } else if (json['carId'] is Map<String, dynamic>) {
-      // If carId is populated object
       carData = json['carId'] as Map<String, dynamic>;
       carId = carData['_id']?.toString() ?? '';
     } else if (json['carId'] != null) {
       carId = json['carId'].toString();
     }
 
-    // Handle userId (could be String or ObjectId)
     String userId = '';
     if (json['userId'] is String) {
       userId = json['userId'];
@@ -70,12 +73,17 @@ class OrderModel {
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'].toString())
           : null,
+      paymentTransactionId: json['paymentTransactionId']?.toString(),
+      paymentDate: json['paymentDate'] != null
+          ? DateTime.parse(json['paymentDate'].toString())
+          : null,
+      ipnValidated: json['ipnValidated'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'carId': carId, // শুধু ID পাঠাবো
+      'carId': carId,
       'userId': userId,
       'deliveryOption': deliveryOption,
       'totalAmount': totalAmount,
@@ -85,10 +93,12 @@ class OrderModel {
       'email': email,
       'phone': phone,
       'location': location,
+      'paymentTransactionId': paymentTransactionId,
+      'paymentDate': paymentDate?.toIso8601String(),
+      'ipnValidated': ipnValidated,
     };
   }
 
-  // Helper method to get car title from carData
   String get carTitle {
     if (carData != null && carData!['title'] != null) {
       return carData!['title'];
@@ -101,7 +111,6 @@ class OrderModel {
     return 'Car Order';
   }
 
-  // Helper method to get car image
   String? get carImage {
     if (carData != null && carData!['media'] != null) {
       if (carData!['media'] is Map) {
@@ -117,7 +126,6 @@ class OrderModel {
     return null;
   }
 
-  // Helper method to get car model/year
   String get carModelYear {
     if (carData != null) {
       final brand = carData!['brand']?.toString() ?? '';
@@ -136,7 +144,6 @@ class OrderModel {
     return '';
   }
 
-  // Helper method to get car price
   String? get carPrice {
     if (carData != null && carData!['pricing'] != null) {
       if (carData!['pricing'] is Map) {
@@ -151,7 +158,6 @@ class OrderModel {
     return null;
   }
 
-  // Helper method to get car location
   String get carLocation {
     if (carData != null && carData!['location'] != null) {
       if (carData!['location'] is Map) {
@@ -170,7 +176,6 @@ class OrderModel {
     return '';
   }
 
-  // Helper method to format date
   String get formattedDate {
     if (createdAt != null) {
       return '${createdAt!.day}/${createdAt!.month}/${createdAt!.year}';
@@ -178,12 +183,14 @@ class OrderModel {
     return '';
   }
 
-  // Check if payment is completed
   bool get isPaid => paymentStatus == 'Paid';
-
-  // Check if payment is pending
   bool get isPending => paymentStatus == 'Pending';
-
-  // Check if payment failed
   bool get isFailed => paymentStatus == 'Failed';
+
+  String get formattedPaymentDate {
+    if (paymentDate != null) {
+      return '${paymentDate!.day}/${paymentDate!.month}/${paymentDate!.year}';
+    }
+    return '';
+  }
 }
