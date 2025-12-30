@@ -1,9 +1,9 @@
-import 'package:car_hub/ui/screens/home/delivery_info_screen.dart';
-import 'package:car_hub/ui/screens/track_car/track_car.dart';
+import 'package:car_hub/providers/payment_provider.dart';
 import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
-import 'package:car_hub/ui/widgets/common_dialog.dart';
+
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
@@ -79,37 +79,132 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         spacing: 20,
                         children: [
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 10,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(
-                                Icons.food_bank_outlined,
+                                Icons.payment,
                                 size: 30,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               Text(
-                                "Bank Details for Payment",
+                                "Payment Information",
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ],
                           ),
-                          _buildRichText("Name : ", "LISTAUTO ANGOLA COMERCIO"),
-                          _buildRichText("Bank Account : ", "13439833710001"),
-                          _buildRichText("Bank Name : ", "MILLENIUM ATLÂNTICO"),
                           _buildRichText(
-                            "iban : ",
-                            "0055 0000 3439 8337 1015 4",
+                            "Selected Method : ",
+                            "SSLCommerz Online Payment",
+                          ),
+                          _buildRichText(
+                            "Order Amount : ",
+                            "\$${allOrderData['totalPrice']}",
+                          ),
+                          _buildRichText(
+                            "Order ID : ",
+                            "#${allOrderData['order']?.sId?.substring(0, 8) ?? 'N/A'}",
+                          ),
+                          _buildRichText(
+                            "Note : ",
+                            "Complete payment to proceed with car delivery",
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: _onTapPayButton,
-                      child: const Text("Pay Now"),
-                    ),
+                  Consumer<PaymentProvider>(
+                    builder: (context, paymentProvider, child) {
+                      if (paymentProvider.isLoading) {
+                        return SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: null,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                                const SizedBox(width: 10),
+                                const Text("Processing..."),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (paymentProvider.status == PaymentStatus.success) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.pushNamed(
+                            context,
+                            TrackingProgress.name,
+                            arguments: {
+                              ...allOrderData,
+                              'paymentMethod': paymentMethod,
+                              'transactionId': paymentProvider.transactionId,
+                            },
+                          );
+                          paymentProvider.reset();
+                        });
+
+                        return SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: null,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.check_circle, size: 20),
+                                SizedBox(width: 10),
+                                Text("Payment Successful"),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (paymentProvider.status == PaymentStatus.failed) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: FilledButton(
+                                onPressed: () =>
+                                    _processPayment(paymentProvider),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                child: const Text("Try Again"),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            if (paymentProvider.errorMessage != null)
+                              Text(
+                                paymentProvider.errorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                          ],
+                        );
+                      }
+
+                      return SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: () => _processPayment(paymentProvider),
+                          child: const Text("Pay Now"),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -138,20 +233,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  void _onTapPayButton() {
-    commonDialog(
-      context,
-      title: "Payment Successful",
-      subtitle:
-          "Payment confirmed! We’ve started processing your car delivery.",
-    );
+  void _processPayment(PaymentProvider paymentProvider) {
+    final car = allOrderData['car'];
+    final order = allOrderData['order'];
 
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pushNamed(
-        context,
-        TrackingProgress.name,
-        arguments: {...allOrderData, 'paymentMethod': paymentMethod},
-      );
-    });
+    paymentProvider.processPayment(
+      orderId: order.sId,
+      totalAmount: allOrderData['totalPrice'],
+      customerName: allOrderData['fullName'],
+      customerEmail: allOrderData['email'],
+      customerPhone: allOrderData['phone'],
+      customerAddress: allOrderData['location'],
+      carTitle: car.title,
+      deliveryOption: allOrderData['deliveryOption'],
+    );
   }
 }
