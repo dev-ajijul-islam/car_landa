@@ -23,11 +23,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
     allOrderData =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
-    final paymentProvider = Provider.of<PaymentProvider>(
-      context,
-      listen: false,
-    );
-    paymentProvider.reset();
+    Future.microtask((){
+      if(mounted){
+        final paymentProvider = Provider.of<PaymentProvider>(
+          context,
+          listen: false,
+        );
+        paymentProvider.reset();
+      }
+    });
   }
 
   @override
