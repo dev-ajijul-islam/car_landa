@@ -1,5 +1,6 @@
 import 'package:car_hub/data/model/order_model.dart';
 import 'package:car_hub/ui/screens/home/car_details_screen.dart';
+import 'package:car_hub/ui/screens/track_car/order_details_screen.dart';
 import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,11 @@ class _TrackCarCardState extends State<TrackCarCard> {
       onTap: () {
         Navigator.pushNamed(
           context,
-          CarDetailsScreen.name,
-          arguments: widget.order.carId,
+          OrderDetailsScreen.name,
+          arguments: {
+            "order" : widget.order,
+            "car" : widget.order.carData
+          },
         );
       },
       child: Card(

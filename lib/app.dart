@@ -44,6 +44,7 @@ import 'package:car_hub/ui/screens/profile/my_bookings.dart';
 import 'package:car_hub/ui/screens/profile/my_history.dart';
 import 'package:car_hub/ui/screens/profile/personal_information.dart';
 import 'package:car_hub/ui/screens/profile/terms_and_condition.dart';
+import 'package:car_hub/ui/screens/track_car/order_details_screen.dart';
 import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -160,6 +161,7 @@ class CarHub extends StatelessWidget {
           MyBookings.name: (_) => MyBookings(),
           TermsAndCondition.name: (_) => TermsAndCondition(),
           CarsByTypeScreen.name: (_) => CarsByTypeScreen(),
+          OrderDetailsScreen.name: (_) => OrderDetailsScreen(),
         },
         initialRoute: SplashScreen.name,
       ),

@@ -12,7 +12,7 @@ class CarModel {
   final Costs costs;
   final String carTypeId;
   final String description;
-  bool ? isFavorite;
+  bool? isFavorite;
   final InquiryContacts inquiryContacts;
 
   CarModel({
@@ -30,7 +30,7 @@ class CarModel {
     required this.carTypeId,
     required this.description,
     required this.inquiryContacts,
-    this.isFavorite
+    this.isFavorite,
   });
 
   factory CarModel.fromJson(Map<String, dynamic> json) {
@@ -48,7 +48,7 @@ class CarModel {
       costs: Costs.fromJson(json['costs'] ?? {}),
       carTypeId: json['carTypeId']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
-      isFavorite: json['isFavorite'] ?? '',
+      isFavorite: json['isFavorite'] ?? false,
       inquiryContacts: InquiryContacts.fromJson(json['inquiryContacts'] ?? {}),
     );
   }
@@ -138,11 +138,7 @@ class Discount {
   final double value;
   final String sId;
 
-  Discount({
-    required this.type,
-    required this.value,
-    required this.sId,
-  });
+  Discount({required this.type, required this.value, required this.sId});
 
   factory Discount.fromJson(Map<String, dynamic> json) {
     return Discount(
@@ -153,11 +149,7 @@ class Discount {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'value': value,
-      '_id': sId,
-    };
+    return {'type': type, 'value': value, '_id': sId};
   }
 }
 
@@ -184,12 +176,7 @@ class Location {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'country': country,
-      'city': city,
-      'area': area,
-      '_id': sId,
-    };
+    return {'country': country, 'city': city, 'area': area, '_id': sId};
   }
 }
 
@@ -198,29 +185,23 @@ class Media {
   final List<String> gallery;
   final String sId;
 
-  Media({
-    required this.thumbnail,
-    required this.gallery,
-    required this.sId,
-  });
+  Media({required this.thumbnail, required this.gallery, required this.sId});
 
   factory Media.fromJson(Map<String, dynamic> json) {
     return Media(
       thumbnail: json['thumbnail']?.toString() ?? '',
-      gallery: (json['gallery'] as List<dynamic>?)
-          ?.map((item) => item?.toString() ?? '')
-          .where((item) => item.isNotEmpty)
-          .toList() ?? [],
+      gallery:
+          (json['gallery'] as List<dynamic>?)
+              ?.map((item) => item?.toString() ?? '')
+              .where((item) => item.isNotEmpty)
+              .toList() ??
+          [],
       sId: json['_id']?.toString() ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'thumbnail': thumbnail,
-      'gallery': gallery,
-      '_id': sId,
-    };
+    return {'thumbnail': thumbnail, 'gallery': gallery, '_id': sId};
   }
 }
 
@@ -359,11 +340,6 @@ class InquiryContacts {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'call': call,
-      'message': message,
-      'whatsapp': whatsapp,
-      '_id': sId,
-    };
+    return {'call': call, 'message': message, 'whatsapp': whatsapp, '_id': sId};
   }
 }
