@@ -81,6 +81,47 @@ class NetworkCaller {
     }
   }
 
+  /// ==============================Put Request=======================================
+
+  static Future<NetworkResponse> putRequest({
+    required String url,
+    required Map<String, dynamic> body,
+    String? token,
+  }) async {
+    Uri uri = Uri.parse(url);
+
+    try {
+      Response response = await put(
+        uri,
+        headers: {"Content-Type": "application/json", "token": token ?? ""},
+        body: jsonEncode(body),
+      );
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return NetworkResponse(
+          statusCode: response.statusCode,
+          success: true,
+          message: decodedData["message"],
+          body: decodedData,
+        );
+      } else {
+        return NetworkResponse(
+          statusCode: response.statusCode,
+          success: false,
+          message: decodedData["message"] ?? "Something went wrong",
+        );
+      }
+    } catch (e) {
+      return NetworkResponse(
+        statusCode: null,
+        success: false,
+        message: "Something wrong $e",
+      );
+    }
+  }
+
   /// ==============================Delete Request=======================================
 
   static Future<NetworkResponse> deleteRequest({
