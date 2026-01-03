@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:car_hub/data/model/user_model.dart';
 import 'package:car_hub/data/network/network_caller.dart';
 import 'package:car_hub/data/network/network_response.dart';
 import 'package:car_hub/ui/main_layout.dart';
@@ -13,16 +14,21 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     _watchCurrentUser();
   }
+
   bool inProgress = false;
 
-  User? currentUser;
+  /// Firebase Auth User (auth only)
+  User? firebaseUser;
+
+  /// Backend User (MongoDB) → Full profile
+  UserModel? dbUser;
+
   static String? idToken;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   ///================================= Sign up with email & password ===========================
-
   Future<bool> signUpWithEmailAndPassword({
-    required context,
+    required BuildContext context,
     required String email,
     required String password,
     required String name,
@@ -36,9 +42,10 @@ class AuthProvider extends ChangeNotifier {
         password: password,
       );
 
-      final user = credential.user;
-      if (user == null) return false;
+      firebaseUser = credential.user;
+      if (firebaseUser == null) return false;
 
+      /// Save user to backend
       final response = await NetworkCaller.postRequest(
         url: Urls.createUser,
         body: {"name": name, "email": email, "authenticatedBy": "credentials"},
@@ -46,8 +53,7 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (!response.success) {
-        await user.delete();
-
+        await firebaseUser!.delete();
         showSnackbarMessage(
           context: context,
           message: response.message,
@@ -56,14 +62,25 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
 
-      await user.updateDisplayName(name);
+      await firebaseUser!.updateDisplayName(name);
+      await firebaseUser!.reload();
+      firebaseUser = _auth.currentUser;
+
+      /// Fetch DB user and set
+      dbUser = UserModel(
+        id: response.body?["_id"] ?? "",
+        name: name,
+        email: email,
+        phone: response.body?["phone"],
+        address: response.body?["address"],
+        passportIdUrl: response.body?["passportIdUrl"],
+      );
 
       showSnackbarMessage(
         context: context,
         message: "Sign up successful",
         color: Colors.green,
       );
-      await user.reload();
       return true;
     } on FirebaseAuthException catch (e) {
       showSnackbarMessage(
@@ -79,34 +96,33 @@ class AuthProvider extends ChangeNotifier {
   }
 
   ///================================= Sign in with email & password ===========================
-
   Future<bool> signInWithEmailAndPassword({
-    required context,
+    required BuildContext context,
     required String email,
     required String password,
   }) async {
     inProgress = true;
     notifyListeners();
+
     try {
       final credential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      if (credential.user == null) return false;
 
-      final idToken = await credential.user!.getIdToken();
-      NetworkResponse response = await NetworkCaller.getRequest(
+      firebaseUser = credential.user;
+      if (firebaseUser == null) return false;
+
+      /// Get ID token
+      final idTokenValue = await firebaseUser!.getIdToken();
+      idToken = idTokenValue;
+
+      /// Fetch user from backend
+      final response = await NetworkCaller.getRequest(
         url: Urls.loginUser(idToken: idToken!),
       );
 
-      if (response.success) {
-        showSnackbarMessage(
-          context: context,
-          message: "Sign in successful",
-          color: Colors.green,
-        );
-        return true;
-      } else {
+      if (!response.success || response.body?["body"] == null) {
         showSnackbarMessage(
           context: context,
           message: "Sign in failed",
@@ -114,6 +130,25 @@ class AuthProvider extends ChangeNotifier {
         );
         return false;
       }
+
+      /// Set DB user
+      final body = response.body?["body"];
+      dbUser = UserModel(
+        id: body["_id"] ?? "",
+        name: body["name"] ?? "",
+        email: body["email"] ?? "",
+        phone: body["phone"],
+        address: body["address"],
+        passportIdUrl: body["passportIdUrl"],
+      );
+
+      showSnackbarMessage(
+        context: context,
+        message: "Sign in successful",
+        color: Colors.green,
+      );
+
+      return true;
     } on FirebaseAuthException catch (e) {
       showSnackbarMessage(
         context: context,
@@ -128,45 +163,39 @@ class AuthProvider extends ChangeNotifier {
   }
 
   ///================================= Google Sign In ===========================
-
-  Future<bool> signInWithGoogle(context) async {
+  Future<bool> signInWithGoogle(BuildContext context) async {
     inProgress = true;
     notifyListeners();
 
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-
       await googleSignIn.initialize();
-
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
-
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final String? idTokenValue = googleAuth.idToken;
 
-      final String? idToken = googleAuth.idToken;
+      if (idTokenValue == null) throw Exception("Google ID Token is null");
 
-      if (idToken == null) {
-        throw Exception("Google ID Token is null");
-      }
-
-      final credential = GoogleAuthProvider.credential(idToken: idToken);
-
+      final credential = GoogleAuthProvider.credential(idToken: idTokenValue);
       final userCredential = await _auth.signInWithCredential(credential);
+      firebaseUser = userCredential.user;
 
-      if (userCredential.user == null) return false;
+      if (firebaseUser == null) return false;
 
+      /// Post to backend
       final response = await NetworkCaller.postRequest(
         body: {
-          "name": userCredential.user?.displayName,
-          "email": userCredential.user?.email,
+          "name": firebaseUser?.displayName,
+          "email": firebaseUser?.email,
           "authenticatedBy": "google",
+          "photo" : firebaseUser?.photoURL
         },
         url: Urls.createUser,
-        token: idToken,
+        token: idTokenValue,
       );
 
       if (!response.success) {
-        await userCredential.user?.delete();
-
+        await firebaseUser?.delete();
         showSnackbarMessage(
           context: context,
           message: response.message,
@@ -175,15 +204,30 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
 
+      idToken = idTokenValue;
+
+      /// Set DB user
+      final body = response.body;
+      dbUser = UserModel(
+        id: body?["_id"] ?? "",
+        name: body?["name"] ?? "",
+        email: body?["email"] ?? "",
+        phone: body?["phone"],
+        address: body?["address"],
+        passportIdUrl: body?["passportIdUrl"],
+
+      );
+
       showSnackbarMessage(
         context: context,
-        message: "Sign up successful",
+        message: "Sign in successful",
         color: Colors.green,
       );
+
       Navigator.pushNamedAndRemoveUntil(
         context,
         MainLayout.name,
-        (route) => false,
+            (route) => false,
       );
       return true;
     } catch (e) {
@@ -200,7 +244,6 @@ class AuthProvider extends ChangeNotifier {
   }
 
   ///================================= Update Profile ===========================
-
   Future<bool> updateProfile({
     required BuildContext context,
     required String userId,
@@ -208,6 +251,7 @@ class AuthProvider extends ChangeNotifier {
     String? phone,
     String? address,
     String? passportIdUrl,
+    String? photo,
   }) async {
     inProgress = true;
     notifyListeners();
@@ -220,18 +264,30 @@ class AuthProvider extends ChangeNotifier {
       if (address != null) body["address"] = address;
       if (passportIdUrl != null) body["passportIdUrl"] = passportIdUrl;
 
-      final NetworkResponse response = await NetworkCaller.putRequest(
+      final response = await NetworkCaller.putRequest(
         url: Urls.updateProfile(userId),
         body: body,
         token: idToken,
       );
 
       if (response.success) {
-        // 🔄 Update Firebase display name if changed
-        if (name != null && currentUser != null) {
-          await currentUser!.updateDisplayName(name);
-          await currentUser!.reload();
-          currentUser = _auth.currentUser;
+        /// Update local DB user
+        if (dbUser != null) {
+          dbUser = UserModel(
+            id: dbUser!.id,
+            name: name ?? dbUser!.name,
+            email: dbUser!.email,
+            phone: phone ?? dbUser!.phone,
+            address: address ?? dbUser!.address,
+            passportIdUrl: passportIdUrl ?? dbUser!.passportIdUrl,
+          );
+        }
+
+        /// Only displayName on Firebase
+        if (name != null && firebaseUser != null) {
+          await firebaseUser!.updateDisplayName(name);
+          await firebaseUser!.reload();
+          firebaseUser = _auth.currentUser;
         }
 
         showSnackbarMessage(
@@ -239,7 +295,7 @@ class AuthProvider extends ChangeNotifier {
           message: response.message ?? "Profile updated successfully",
           color: Colors.green,
         );
-
+        notifyListeners();
         return true;
       } else {
         showSnackbarMessage(
@@ -263,29 +319,53 @@ class AuthProvider extends ChangeNotifier {
   }
 
   ///================================= Watch current user ===========================
-
   void _watchCurrentUser() {
     _auth.authStateChanges().listen((User? user) async {
-      currentUser = user;
+      firebaseUser = user;
       idToken = await user?.getIdToken();
+
+      /// If user is logged in, fetch DB user automatically
+      if (user != null) {
+        final response = await NetworkCaller.getRequest(
+          url: Urls.loginUser(idToken: idToken!),
+        );
+        if (response.success && response.body?["body"] != null) {
+          final body = response.body?["body"];
+          dbUser = UserModel(
+            id: body["_id"] ?? "",
+            name: body["name"] ?? "",
+            email: body["email"] ?? "",
+            phone: body["phone"],
+            address: body["address"],
+            passportIdUrl: body["passportIdUrl"],
+            photo: body["photo"],
+          );
+        }
+      }
+
       notifyListeners();
     });
   }
 
   ///================================= Sign out ===========================
-
-  Future<void> signOut(context) async {
+  Future<void> signOut(BuildContext context) async {
     try {
       await _auth.signOut();
       await GoogleSignIn.instance.signOut();
 
+      firebaseUser = null;
+      dbUser = null;
+      idToken = null;
+
       Navigator.pushNamedAndRemoveUntil(
         context,
         SignInScreen.name,
-        (_) => false,
+            (_) => false,
       );
     } catch (e) {
       showSnackbarMessage(context: context, message: "Sign out failed: $e");
+    } finally {
+      notifyListeners();
     }
   }
 }

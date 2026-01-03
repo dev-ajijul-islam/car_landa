@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:car_hub/data/model/user_model.dart';
 import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/ui/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
@@ -26,11 +27,11 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    final User? user = context.read<AuthProvider>().currentUser;
+    final UserModel? user = context.read<AuthProvider>().dbUser;
     return Scaffold(
       body: SafeArea(
         child: Visibility(
-          visible: context.read<AuthProvider>().currentUser != null,
+          visible: context.read<AuthProvider>().dbUser != null,
           replacement: Center(
             child: ElevatedButton(
               onPressed: () {
@@ -53,8 +54,8 @@ class _ProfileState extends State<Profile> {
                             backgroundColor: Colors.white,
                             backgroundImage: profileImage != null
                                 ? FileImage(File(profileImage!.path))
-                                : user!.photoURL != null
-                                ? NetworkImage(user.photoURL.toString())
+                                : user.photo != null
+                                ? NetworkImage(user.photo.toString())
                                 : AssetImage(AssetsFilePaths.dummyProfile),
                           ),
 
@@ -82,7 +83,7 @@ class _ProfileState extends State<Profile> {
                     Column(
                       children: [
                         Text(
-                          user!.displayName.toString(),
+                          user.name.toString(),
                           style: TextTheme.of(context).titleMedium,
                         ),
                         Text(user.email.toString()),

@@ -22,7 +22,7 @@ class _DeliveryInfoScreenState extends State<DeliveryInfoScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late CarModel car;
   late String deliveryOption;
-  late final user = context.read<AuthProvider>().currentUser;
+  late final user = context.read<AuthProvider>().dbUser;
 
   @override
   void didChangeDependencies() {
@@ -35,7 +35,7 @@ class _DeliveryInfoScreenState extends State<DeliveryInfoScreen> {
 
   @override
   void initState() {
-    _nameTEController.text = user!.displayName.toString();
+    _nameTEController.text = user!.name.toString();
     _emailTEController.text = user!.email.toString();
     super.initState();
   }

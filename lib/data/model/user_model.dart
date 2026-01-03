@@ -9,6 +9,7 @@ class UserModel {
   final String? phone;
   final String? address;
   final String? passportIdUrl;
+  final String? photo;
 
   UserModel({
     this.id,
@@ -17,6 +18,7 @@ class UserModel {
     this.phone,
     this.address,
     this.passportIdUrl,
+    this.photo,
   });
 
   // ---------- From JSON ----------

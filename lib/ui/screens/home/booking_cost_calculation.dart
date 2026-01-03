@@ -144,7 +144,7 @@ class BookingCostCalculation extends StatelessWidget {
       String location,
       CreateOrderProvider orderProvider,
       ) async {
-    final user = context.read<AuthProvider>().currentUser;
+    final user = context.read<AuthProvider>().dbUser;
     if (user == null) {
       showSnackbarMessage(
         context: context,
@@ -156,7 +156,7 @@ class BookingCostCalculation extends StatelessWidget {
 
     final order = OrderModel(
       carId: car.sId,
-      userId: user.uid,
+      userId: user.id.toString(),
       deliveryOption: deliveryOption,
       totalAmount: totalPrice,
       paymentMethod: 'Pending',

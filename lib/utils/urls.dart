@@ -65,5 +65,5 @@ class Urls {
   static String confirmPayment = "$baseUrl/payment/confirm";
   static String getPaymentStatus(String orderId) =>
       "$baseUrl/payment/status/$orderId";
-  static String updateProfile(String userId) => "$baseUrl/users/$userId";
+  static String updateProfile(String userId) => "$baseUrl/user/$userId";
 }

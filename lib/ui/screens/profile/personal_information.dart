@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:car_hub/providers/auth_provider.dart';
+import 'package:car_hub/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -28,17 +29,30 @@ class _PersonalInformationState extends State<PersonalInformation> {
   void initState() {
     super.initState();
 
-    final user = context.read<AuthProvider>().currentUser;
+    final user = context.read<AuthProvider>().dbUser;
     if (user != null) {
-      _nameController.text = user.displayName.toString();
-      _emailController.text = user.email.toString();
-      _phoneController.text = user.phoneNumber.toString();
-
+      _nameController.text = user.name;
+      _emailController.text = user.email;
+      _phoneController.text = user.phone!;
+      _addressController.text = user.address!;
     }
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bool loading = context.select<AuthProvider, bool>(
+      (p) => p.inProgress,
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text("Personal information")),
       body: Padding(
@@ -87,7 +101,10 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
               const Spacer(),
 
-              FilledButton(onPressed: _onSubmit, child: const Text("Update")),
+              FilledButton(
+                onPressed: loading ? null : _onSubmit,
+                child: loading ? const Loading() : const Text("Update"),
+              ),
             ],
           ),
         ),
@@ -96,7 +113,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
   }
 
   /// ---------- SUBMIT ----------
-  void _onSubmit() {
+  Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (passportIdImage == null) {
@@ -106,14 +123,19 @@ class _PersonalInformationState extends State<PersonalInformation> {
       return;
     }
 
-    final data = {
-      "name": _nameController.text.trim(),
-      "phone": _phoneController.text.trim(),
-      "address": _addressController.text.trim(),
-      "passport": passportIdImage!.path,
-    };
+    final authProvider = context.read<AuthProvider>();
+    final userId = authProvider.firebaseUser?.uid;
 
-    debugPrint("SUBMIT DATA: $data");
+    if (userId == null) return;
+
+    await authProvider.updateProfile(
+      context: context,
+      userId: userId,
+      name: _nameController.text.trim(),
+      phone: _phoneController.text.trim(),
+      address: _addressController.text.trim(),
+      passportIdUrl: "passportIdImage!.path",
+    );
   }
 
   /// ---------- UI HELPERS ----------

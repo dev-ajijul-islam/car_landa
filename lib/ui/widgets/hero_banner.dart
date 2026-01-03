@@ -1,3 +1,4 @@
+import 'package:car_hub/data/model/user_model.dart';
 import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/ui/screens/home/notifications_screen.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
@@ -11,7 +12,7 @@ class HeroBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final User? user = context.watch<AuthProvider>().currentUser;
+    final UserModel? user = context.watch<AuthProvider>().dbUser;
     return   Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -29,7 +30,7 @@ class HeroBanner extends StatelessWidget {
         if (user != null) ...[
           Visibility(
             visible:
-            context.watch<AuthProvider>().currentUser != null,
+            context.watch<AuthProvider>().dbUser != null,
             child: Positioned(
               top: 40,
               child: SizedBox(
@@ -44,9 +45,9 @@ class HeroBanner extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             backgroundColor: Colors.white,
-                            backgroundImage: user.photoURL != null
+                            backgroundImage: user.photo != null
                                 ? NetworkImage(
-                              user.photoURL.toString(),
+                              user.phone.toString(),
                             )
                                 : AssetImage(
                               AssetsFilePaths.dummyProfile,
@@ -57,7 +58,7 @@ class HeroBanner extends StatelessWidget {
                             CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Hello, ${user.displayName}",
+                                "Hello, ${user.name}",
                                 style: TextTheme.of(context)
                                     .titleMedium
                                     ?.copyWith(
