@@ -199,6 +199,69 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  ///================================= Update Profile ===========================
+
+  Future<bool> updateProfile({
+    required BuildContext context,
+    required String userId,
+    String? name,
+    String? phone,
+    String? address,
+    String? passportIdUrl,
+  }) async {
+    inProgress = true;
+    notifyListeners();
+
+    try {
+      final Map<String, dynamic> body = {};
+
+      if (name != null) body["name"] = name;
+      if (phone != null) body["phone"] = phone;
+      if (address != null) body["address"] = address;
+      if (passportIdUrl != null) body["passportIdUrl"] = passportIdUrl;
+
+      final NetworkResponse response = await NetworkCaller.putRequest(
+        url: Urls.updateProfile(userId),
+        body: body,
+        token: idToken,
+      );
+
+      if (response.success) {
+        // 🔄 Update Firebase display name if changed
+        if (name != null && currentUser != null) {
+          await currentUser!.updateDisplayName(name);
+          await currentUser!.reload();
+          currentUser = _auth.currentUser;
+        }
+
+        showSnackbarMessage(
+          context: context,
+          message: response.message ?? "Profile updated successfully",
+          color: Colors.green,
+        );
+
+        return true;
+      } else {
+        showSnackbarMessage(
+          context: context,
+          message: response.message ?? "Profile update failed",
+          color: Colors.red,
+        );
+        return false;
+      }
+    } catch (e) {
+      showSnackbarMessage(
+        context: context,
+        message: "Profile update failed: $e",
+        color: Colors.red,
+      );
+      return false;
+    } finally {
+      inProgress = false;
+      notifyListeners();
+    }
+  }
+
   ///================================= Watch current user ===========================
 
   void _watchCurrentUser() {
