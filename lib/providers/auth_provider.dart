@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:car_hub/data/model/user_model.dart';
 import 'package:car_hub/data/network/network_caller.dart';
 import 'package:car_hub/ui/main_layout.dart';
@@ -8,6 +10,8 @@ import 'package:car_hub/utils/urls.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class AuthProvider extends ChangeNotifier {
   AuthProvider() {
@@ -251,19 +255,80 @@ class AuthProvider extends ChangeNotifier {
     String? name,
     String? phone,
     String? address,
-    String? passportIdUrl,
-    String? photo,
+    XFile? profileImageFile,
+    XFile? passportImageFile,
   }) async {
     inProgress = true;
     notifyListeners();
 
     try {
-      final Map<String, dynamic> body = {};
+      String? uploadedProfileUrl;
+      String? uploadedPassportUrl;
 
+      // Upload profile image if provided
+      if (profileImageFile != null) {
+        final bytes = await File(profileImageFile.path).readAsBytes();
+        final base64Image = base64Encode(bytes);
+
+        final response = await http.post(
+          Uri.parse(
+            "https://api.imgbb.com/1/upload?key=5350a71f27b5f7f75e8d222f343c8cd4",
+          ),
+          body: {"image": base64Image},
+          headers: {"token": ?idToken},
+        );
+
+        if (response.statusCode == 200) {
+          final decoded = jsonDecode(response.body);
+          uploadedProfileUrl = decoded["data"]["url"];
+        } else {
+          print(
+            "------------------------------------------${response.statusCode}",
+          );
+          showSnackbarMessage(
+            context: context,
+            message: "Profile image upload failed",
+            color: Colors.red,
+          );
+          return false;
+        }
+      }
+
+      // Upload passport/proof image if provided
+      if (passportImageFile != null) {
+        final bytes = await File(passportImageFile.path).readAsBytes();
+        final base64Image = base64Encode(bytes);
+
+        final response = await http.post(
+          Uri.parse(
+            "https://api.imgbb.com/1/upload?key=5350a71f27b5f7f75e8d222f343c8cd4",
+          ),
+          body: {"image": base64Image},
+          headers: {"token": ?idToken},
+        );
+
+        if (response.statusCode == 200) {
+          final decoded = jsonDecode(response.body);
+          uploadedPassportUrl = decoded["data"]["url"];
+        } else {
+          showSnackbarMessage(
+            context: context,
+            message: "Passport image upload failed",
+            color: Colors.red,
+          );
+          return false;
+        }
+      }
+
+      // Prepare body for backend update
+      final Map<String, dynamic> body = {};
       if (name != null) body["name"] = name;
       if (phone != null) body["phone"] = phone;
       if (address != null) body["address"] = address;
-      if (passportIdUrl != null) body["passportIdUrl"] = passportIdUrl;
+      if (uploadedProfileUrl != null) body["photo"] = uploadedProfileUrl;
+      if (uploadedPassportUrl != null) {
+        body["passportIdUrl"] = uploadedPassportUrl;
+      }
 
       final response = await NetworkCaller.putRequest(
         url: Urls.updateProfile(userId),
@@ -272,7 +337,7 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.success) {
-        /// Update local DB user
+        // Update local dbUser
         if (dbUser != null) {
           dbUser = UserModel(
             id: dbUser!.id,
@@ -280,11 +345,12 @@ class AuthProvider extends ChangeNotifier {
             email: dbUser!.email,
             phone: phone ?? dbUser!.phone,
             address: address ?? dbUser!.address,
-            passportIdUrl: passportIdUrl ?? dbUser!.passportIdUrl,
-            photo: photo ?? dbUser!.photo,
+            passportIdUrl: uploadedPassportUrl ?? dbUser!.passportIdUrl,
+            photo: uploadedProfileUrl ?? dbUser!.photo,
           );
         }
 
+        // Update firebase display name if changed
         if (name != null && firebaseUser != null) {
           await firebaseUser!.updateDisplayName(name);
           await firebaseUser!.reload();
@@ -297,7 +363,9 @@ class AuthProvider extends ChangeNotifier {
           color: Colors.green,
         );
 
-        Navigator.pop(context);
+        if (profileImageFile == null) {
+          Navigator.pop(context);
+        }
         notifyListeners();
         return true;
       } else {
@@ -370,7 +438,6 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
 
-      // 🔐 Re-authenticate
       final credential = EmailAuthProvider.credential(
         email: user.email!,
         password: oldPassword,
@@ -421,7 +488,6 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   ///================================= Sign out ===========================
   Future<void> signOut(BuildContext context) async {

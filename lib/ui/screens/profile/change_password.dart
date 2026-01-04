@@ -54,7 +54,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     controller: _oldPasswordController,
                     obscureText: _oldObscure,
                     validator: (v) =>
-                    v == null || v.isEmpty ? "Enter old password" : null,
+                        v == null || v.isEmpty ? "Enter old password" : null,
                     decoration: InputDecoration(
                       hintText: "Existing password",
                       prefixIcon: const Icon(Icons.lock_outline),
@@ -140,10 +140,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                       onPressed: loading ? null : () => _onSubmit(authProvider),
                       child: loading
                           ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
                           : const Text("Change Password"),
                     ),
                   ),

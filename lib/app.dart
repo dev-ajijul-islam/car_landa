@@ -40,7 +40,6 @@ import 'package:car_hub/ui/screens/on_start/welcome_screen.dart';
 import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
 import 'package:car_hub/ui/screens/on_start/splash_screen.dart';
 import 'package:car_hub/ui/screens/profile/change_password.dart';
-import 'package:car_hub/ui/screens/profile/my_bookings.dart';
 import 'package:car_hub/ui/screens/profile/my_history.dart';
 import 'package:car_hub/ui/screens/profile/personal_information.dart';
 import 'package:car_hub/ui/screens/profile/terms_and_condition.dart';
@@ -158,7 +157,6 @@ class CarHub extends StatelessWidget {
           PersonalInformation.name: (_) => PersonalInformation(),
           ChangePassword.name: (_) => ChangePassword(),
           MyHistory.name: (_) => MyHistory(),
-          MyBookings.name: (_) => MyBookings(),
           TermsAndCondition.name: (_) => TermsAndCondition(),
           CarsByTypeScreen.name: (_) => CarsByTypeScreen(),
           OrderDetailsScreen.name: (_) => OrderDetailsScreen(),

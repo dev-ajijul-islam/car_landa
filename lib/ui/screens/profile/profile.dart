@@ -1,16 +1,12 @@
 import 'dart:io';
-
-import 'package:car_hub/data/model/user_model.dart';
 import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/ui/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:car_hub/ui/screens/on_start/language_select_screen.dart';
 import 'package:car_hub/ui/screens/profile/change_password.dart';
-import 'package:car_hub/ui/screens/profile/my_bookings.dart';
 import 'package:car_hub/ui/screens/profile/my_history.dart';
 import 'package:car_hub/ui/screens/profile/personal_information.dart';
 import 'package:car_hub/ui/screens/profile/terms_and_condition.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +28,7 @@ class _ProfileState extends State<Profile> {
         child: Consumer<AuthProvider>(
           builder: (context, provider, child) {
             final user = provider.dbUser;
+
             return Visibility(
               visible: provider.inProgress == false,
               replacement: Center(
@@ -42,7 +39,7 @@ class _ProfileState extends State<Profile> {
                   child: Text("Login"),
                 ),
               ),
-              child: provider.dbUser != null
+              child: user != null
                   ? ListView(
                       children: [
                         SizedBox(height: 30),
@@ -54,17 +51,22 @@ class _ProfileState extends State<Profile> {
                               CircleAvatar(
                                 radius: 70,
                                 backgroundColor: Colors.white,
-                                backgroundImage: profileImage != null
+                                backgroundImage:
+                                    profileImage != null && !provider.inProgress
                                     ? FileImage(File(profileImage!.path))
-                                    : user?.photo != null
-                                    ? NetworkImage(user!.photo.toString())
-                                    : AssetImage(AssetsFilePaths.dummyProfile),
+                                    : user.photo != null
+                                    ? NetworkImage(user.photo!)
+                                    : AssetImage(AssetsFilePaths.dummyProfile)
+                                          as ImageProvider,
+                                child:
+                                    provider.inProgress && profileImage != null
+                                    ? CircularProgressIndicator()
+                                    : null,
                               ),
-
                               Positioned(
                                 bottom: -17,
                                 child: GestureDetector(
-                                  onTap: _onTapProfilePicture,
+                                  onTap: () => _onTapProfilePicture(provider),
                                   child: Container(
                                     padding: EdgeInsets.all(3),
                                     decoration: BoxDecoration(
@@ -85,13 +87,12 @@ class _ProfileState extends State<Profile> {
                         Column(
                           children: [
                             Text(
-                              user!.name.toString(),
+                              user.name.toString(),
                               style: TextTheme.of(context).titleMedium,
                             ),
                             Text(user.email.toString()),
                           ],
                         ),
-
                         ListView.separated(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -132,11 +133,6 @@ class _ProfileState extends State<Profile> {
     },
     {"icon": Icons.notifications_outlined, "title": "Notification"},
     {
-      "icon": Icons.directions_car_sharp,
-      "title": "My Bookings Car",
-      "route": MyBookings.name,
-    },
-    {
       "icon": Icons.history_outlined,
       "title": "History",
       "route": MyHistory.name,
@@ -154,12 +150,25 @@ class _ProfileState extends State<Profile> {
     {"icon": Icons.logout_outlined, "title": "Log Out"},
   ];
 
-  Future _onTapProfilePicture() async {
+  Future<void> _onTapProfilePicture(AuthProvider provider) async {
     ImagePicker picker = ImagePicker();
     XFile? picked = await picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      profileImage = picked;
-    });
+
+    if (picked != null) {
+      setState(() {
+        profileImage = picked;
+      });
+
+      // Call updateProfile for profile image only
+      final userId = provider.dbUser?.id;
+      if (userId != null) {
+        await provider.updateProfile(
+          context: context,
+          userId: userId,
+          profileImageFile: picked, // send XFile to provider
+        );
+      }
+    }
   }
 }
 
@@ -183,6 +192,7 @@ class ProfileMenuTile extends StatefulWidget {
 
 class _ProfileMenuTileState extends State<ProfileMenuTile> {
   bool isNotificationOn = true;
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -237,7 +247,12 @@ class _ProfileMenuTileState extends State<ProfileMenuTile> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: OutlinedButton(onPressed: () {}, child: Text("No")),
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("No"),
+                  ),
                 ),
                 Expanded(
                   child: FilledButton(

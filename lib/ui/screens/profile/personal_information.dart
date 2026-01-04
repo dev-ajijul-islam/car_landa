@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/ui/widgets/loading.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -115,7 +116,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           _label("Upload Passport / ID"),
                           _passportPicker(context),
 
-                          const Spacer(), // ✅ preserved
+                          const Spacer(),
 
                           SizedBox(
                             width: double.infinity,
@@ -154,7 +155,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
       name: _nameController.text.trim(),
       phone: _phoneController.text.trim(),
       address: _addressController.text.trim(),
-      passportIdUrl: passportIdImage?.path,
+      passportImageFile : passportIdImage,
     );
   }
 
@@ -189,26 +190,34 @@ class _PersonalInformationState extends State<PersonalInformation> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: Theme.of(context).primaryColor),
         ),
-        child: SizedBox(
-          height: 150,
-          width: double.infinity,
-          child: passportIdImage != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.file(
-                    File(passportIdImage!.path),
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.upload_file),
-                      Text("Click to upload"),
-                    ],
-                  ),
-                ),
+        child: Consumer<AuthProvider>(
+          builder: (context, provider, child) => SizedBox(
+            height: 150,
+            width: double.infinity,
+            child: passportIdImage != null
+                ? ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.file(
+                File(passportIdImage!.path),
+                fit: BoxFit.cover,
+              ),
+            )
+                : provider.dbUser?.passportIdUrl != null ? ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                provider.dbUser!.passportIdUrl.toString(),
+                fit: BoxFit.cover,
+              ),
+            ) :  const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.upload_file),
+                  Text("Click to upload"),
+                ],
+              ),
+            ),
+          ) ,
         ),
       ),
     );
