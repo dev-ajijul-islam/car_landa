@@ -31,10 +31,10 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
     final user = context.read<AuthProvider>().dbUser;
     if (user != null) {
-      _nameController.text = user.name;
-      _emailController.text = user.email;
-      _phoneController.text = user.phone!;
-      _addressController.text = user.address!;
+      _nameController.text = user.name.toString();
+      _emailController.text = user.email.toString();
+      _phoneController.text = user.phone ?? "";
+      _addressController.text = user.address ?? "";
     }
   }
 
@@ -84,8 +84,12 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 hint: "Enter phone number",
                 icon: Icons.phone_outlined,
                 keyboardType: TextInputType.phone,
-                validator: (v) =>
-                    v!.length < 10 ? "Enter valid phone number" : null,
+                validator: (v) {
+                  if (v!.isNotEmpty && v.length < 10) {
+                    return "Enter valid phone number";
+                  }
+                  return null;
+                },
               ),
 
               _label("Address"),
@@ -93,7 +97,6 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 controller: _addressController,
                 hint: "Enter address",
                 icon: Icons.location_on_outlined,
-                validator: (v) => v!.isEmpty ? "Address is required" : null,
               ),
 
               _label("Upload Passport / ID"),
@@ -115,13 +118,6 @@ class _PersonalInformationState extends State<PersonalInformation> {
   /// ---------- SUBMIT ----------
   Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) return;
-
-    if (passportIdImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please upload passport / ID")),
-      );
-      return;
-    }
 
     final authProvider = context.read<AuthProvider>();
     final userId = authProvider.firebaseUser?.uid;

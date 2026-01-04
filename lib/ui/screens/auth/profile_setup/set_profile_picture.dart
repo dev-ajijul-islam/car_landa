@@ -77,7 +77,16 @@ class _SetProfilePictureState extends State<SetProfilePicture> {
               Positioned(
                 top: -10,
                 right: 10,
-                child: TextButton(onPressed: () {}, child: Text("Skip")),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      MainLayout.name,
+                      (route) => false,
+                    );
+                  },
+                  child: Text("Skip"),
+                ),
               ),
             ],
           ),
@@ -117,6 +126,10 @@ class _SetProfilePictureState extends State<SetProfilePicture> {
   }
 
   void _onTapAddPhotoButton() {
-    Navigator.pushNamedAndRemoveUntil(context, MainLayout.name,(route) => false,);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      MainLayout.name,
+      (route) => false,
+    );
   }
 }

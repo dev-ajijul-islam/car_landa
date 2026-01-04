@@ -1,11 +1,8 @@
 class UserModel {
   final String? id;
 
-
-  final String name;
-  final String email;
-
-
+  final String? name;
+  final String? email;
   final String? phone;
   final String? address;
   final String? passportIdUrl;
@@ -30,6 +27,7 @@ class UserModel {
       phone: json['phone'],
       address: json['address'],
       passportIdUrl: json['passportIdUrl'],
+      photo: json['photo'],
     );
   }
 
@@ -42,9 +40,9 @@ class UserModel {
       if (phone != null) 'phone': phone,
       if (address != null) 'address': address,
       if (passportIdUrl != null) 'passportIdUrl': passportIdUrl,
+      if (photo != null) 'photo': photo,
     };
   }
-
 
   UserModel copyWith({
     String? id,
@@ -53,6 +51,7 @@ class UserModel {
     String? phone,
     String? address,
     String? passportIdUrl,
+    String? photo,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -61,6 +60,7 @@ class UserModel {
       phone: phone ?? this.phone,
       address: address ?? this.address,
       passportIdUrl: passportIdUrl ?? this.passportIdUrl,
+      photo: photo ?? this.photo,
     );
   }
 }

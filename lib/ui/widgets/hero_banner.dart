@@ -47,7 +47,7 @@ class HeroBanner extends StatelessWidget {
                             backgroundColor: Colors.white,
                             backgroundImage: user.photo != null
                                 ? NetworkImage(
-                              user.phone.toString(),
+                              user.photo.toString(),
                             )
                                 : AssetImage(
                               AssetsFilePaths.dummyProfile,
