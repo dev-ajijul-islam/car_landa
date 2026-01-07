@@ -251,7 +251,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       Navigator.pushNamed(
         context,
         SignUpSuccessScreen.name,
-        arguments: {"email": _emailController.text},
+        arguments: {
+          "message":
+              "An verification email has sent to your email please verify and login",
+        },
       );
     }
   }

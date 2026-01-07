@@ -40,9 +40,13 @@ class AuthProvider extends ChangeNotifier {
         email: email,
         password: password,
       );
-      await credential.user?.updateDisplayName(name);
+
       firebaseUser = credential.user;
       if (firebaseUser == null) return false;
+
+      await firebaseUser!.updateDisplayName(name);
+
+      await firebaseUser!.sendEmailVerification();
 
       final response = await NetworkCaller.postRequest(
         url: Urls.createUser,
@@ -60,25 +64,16 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
 
-      await firebaseUser!.reload();
-      firebaseUser = _auth.currentUser;
-
-      /// Fetch DB user and set
-      dbUser = UserModel(
-        id: response.body?["_id"],
-        name: name,
-        email: email,
-        phone: response.body?["phone"],
-        address: response.body?["address"],
-        passportIdUrl: response.body?["passportIdUrl"],
-        photo: response.body?["photo"],
-      );
+      await _auth.signOut();
+      firebaseUser = null;
+      idToken = null;
 
       showSnackbarMessage(
         context: context,
-        message: "Sign up successful",
+        message: "Verification email sent. Please verify before login.",
         color: Colors.green,
       );
+
       return true;
     } on FirebaseAuthException catch (e) {
       showSnackbarMessage(
@@ -111,11 +106,20 @@ class AuthProvider extends ChangeNotifier {
       firebaseUser = credential.user;
       if (firebaseUser == null) return false;
 
-      /// Get ID token
+      // ❌ BLOCK UNVERIFIED USERS
+      if (!firebaseUser!.emailVerified) {
+        await _auth.signOut();
+        showSnackbarMessage(
+          context: context,
+          message: "Please verify your email before signing in",
+          color: Colors.red,
+        );
+        return false;
+      }
+
       final idTokenValue = await firebaseUser!.getIdToken();
       idToken = idTokenValue;
 
-      /// Fetch user from backend
       final response = await NetworkCaller.getRequest(
         url: Urls.loginUser(idToken: idToken!),
       );
@@ -129,12 +133,11 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
 
-      /// Set DB user
-      final body = response.body?["body"];
+      final body = response.body!["body"];
       dbUser = UserModel(
-        id: body["_id"] ?? "",
-        name: body["name"] ?? "",
-        email: body["email"] ?? "",
+        id: body["_id"],
+        name: body["name"],
+        email: body["email"],
         phone: body["phone"],
         address: body["address"],
         passportIdUrl: body["passportIdUrl"],

@@ -9,6 +9,8 @@ class SignUpSuccessScreen extends StatelessWidget {
   static String name = "sign-up-success";
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -42,12 +44,20 @@ class SignUpSuccessScreen extends StatelessWidget {
                                   style: TextTheme.of(context).titleMedium,
                                 ),
                                 Text(
-                                  "You’ve successfully created your account. Let’s get started on your Journey",
+                                  "You’ve successfully created your account.",
                                   textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  args["message"],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: ColorScheme.of(context).primary,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               ],
                             ),
-        
+
                             SizedBox(
                               width: MediaQuery.of(context).size.width - 20,
                               child: FilledButton(
@@ -65,11 +75,13 @@ class SignUpSuccessScreen extends StatelessWidget {
                 ),
                 Positioned(
                   top: 220,
-                  child: SvgPicture.asset(width: 120, AssetsFilePaths.svgTickLogo),
+                  child: SvgPicture.asset(
+                    width: 120,
+                    AssetsFilePaths.svgTickLogo,
+                  ),
                 ),
               ],
             ),
-        
           ],
         ),
       ),
@@ -77,6 +89,6 @@ class SignUpSuccessScreen extends StatelessWidget {
   }
 
   _onTapGoToSignInScreenButton(BuildContext context) {
-    Navigator.pushNamed(context, SetProfilePicture.name);
+    Navigator.pushNamed(context, SignInScreen.name);
   }
 }

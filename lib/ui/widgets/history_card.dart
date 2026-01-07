@@ -12,7 +12,11 @@ class HistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, TrackingProgress.name,arguments: order.sId);
+        Navigator.pushNamed(
+          context,
+          TrackingProgress.name,
+          arguments: order.sId,
+        );
       },
       child: Card(
         clipBehavior: Clip.hardEdge,
