@@ -1,110 +1,53 @@
-import 'package:car_hub/providers/auth_provider.dart';
-import 'package:car_hub/ui/screens/auth/sign_in/reset_password_screen.dart';
-import 'package:car_hub/ui/screens/auth/sign_up/sign_up_success_screen.dart';
+import 'package:car_hub/ui/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:provider/provider.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
-  const EmailVerificationScreen({super.key});
-
-  static String name = "verify-email";
-
-  @override
-  State<EmailVerificationScreen> createState() =>
-      _EmailVerificationScreenState();
-}
-
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class PinVerificationScreen extends StatelessWidget {
+  const PinVerificationScreen({super.key});
+  static String name = "pin-verification";
 
   @override
   Widget build(BuildContext context) {
-    final Map<String,dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
+    final email = ModalRoute.of(context)?.settings.arguments as String?;
 
     return Scaffold(
       appBar: AppBar(),
-      body: SafeArea(
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 20),
-                    Text(
-                      "Verify your email address ",
-                      style: TextTheme.of(context).titleMedium,
-                    ),
-                    SizedBox(height: 10),
-                    Text("We have sent a code to your "),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        text: "${args["email"]}",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: ColorScheme.of(context).primary,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: "Enter it below to activate your account ",
-                            style: TextTheme.of(context).bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 50),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: PinCodeTextField(
-                        backgroundColor: Colors.transparent,
-                        keyboardType: TextInputType.number,
-                        showCursor: false,
-                        pinTheme: PinTheme(shape: PinCodeFieldShape.circle),
-                        appContext: context,
-                        length: 6,
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    FilledButton(
-                      onPressed: _onTapVerifyButton,
-                      child: Text("Verify"),
-                    ),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        text: "Did'nt recive a code ? ",
-                        style: TextTheme.of(context).bodyMedium,
-                        children: [
-                          TextSpan(
-                            text: "Resend Code",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: ColorScheme.of(context).primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.mark_email_read_outlined, size: 80),
+              const SizedBox(height: 20),
+              Text(
+                "Check your email",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "We sent a password reset link to",
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                email ?? "",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 30),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    SignInScreen.name,
+                    (route) => false,
+                  );
+                },
+                child: const Text("Back to Sign In"),
+              ),
+            ],
           ),
         ),
       ),
     );
-  }
-
-  _onTapVerifyButton() {
-    Navigator.pushNamed(context, SignUpSuccessScreen.name);
   }
 }

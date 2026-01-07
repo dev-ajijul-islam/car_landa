@@ -164,6 +164,56 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  ///----------------------------------foget password-----------------------------
+
+  Future<bool> forgotPassword({
+    required BuildContext context,
+    required String email,
+  }) async {
+    inProgress = true;
+    notifyListeners();
+
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+
+      showSnackbarMessage(
+        context: context,
+        message: "Password reset link sent to your email",
+        color: Colors.green,
+      );
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      String message = "Password reset failed";
+
+      switch (e.code) {
+        case 'user-not-found':
+          message = "No user found with this email";
+          break;
+        case 'invalid-email':
+          message = "Invalid email address";
+          break;
+      }
+
+      showSnackbarMessage(
+        context: context,
+        message: message,
+        color: Colors.red,
+      );
+      return false;
+    } catch (e) {
+      showSnackbarMessage(
+        context: context,
+        message: "Password reset failed: $e",
+        color: Colors.red,
+      );
+      return false;
+    } finally {
+      inProgress = false;
+      notifyListeners();
+    }
+  }
+
   ///================================= Google Sign In ===========================
 
   Future<bool> signInWithGoogle(context) async {

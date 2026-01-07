@@ -20,7 +20,6 @@ import 'package:car_hub/providers/track_car_provider.dart';
 import 'package:car_hub/providers/view_cars_provider.dart';
 import 'package:car_hub/ui/main_layout.dart';
 import 'package:car_hub/ui/screens/auth/profile_setup/set_profile_picture.dart';
-import 'package:car_hub/ui/screens/auth/sign_in/pin_verification_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_in/reset_email_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_in/reset_password_screen.dart';
 import 'package:car_hub/ui/screens/auth/sign_in/reset_password_success.dart';
@@ -139,10 +138,10 @@ class CarHub extends StatelessWidget {
           SignInScreen.name: (_) => SignInScreen(),
           SignUpScreen.name: (_) => SignUpScreen(),
           ResetEmailScreen.name: (_) => ResetEmailScreen(),
-          PinVerificationScreen.name: (_) => PinVerificationScreen(),
+          ResetEmailScreen.name: (_) => ResetEmailScreen(),
           ResetPasswordScreen.name: (_) => ResetPasswordScreen(),
           ResetPasswordSuccess.name: (_) => ResetPasswordSuccess(),
-          EmailVerificationScreen.name: (_) => EmailVerificationScreen(),
+          PinVerificationScreen.name : (_)=> PinVerificationScreen(),
           SignUpSuccessScreen.name: (_) => SignUpSuccessScreen(),
           SetProfilePicture.name: (_) => SetProfilePicture(),
           HomeScreen.name: (_) => HomeScreen(),
