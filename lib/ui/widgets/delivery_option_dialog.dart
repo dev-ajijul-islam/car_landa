@@ -1,4 +1,5 @@
 import 'package:car_hub/ui/screens/home/booking_cost_calculation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 void deliveryDialog(BuildContext context) {
@@ -15,21 +16,21 @@ void deliveryDialog(BuildContext context) {
         builder: (context, setState) {
 
           return AlertDialog(
-            title: Text("Delivery Options"),
+            title: Text("car_details.delivery_options".tr()),
             content: Column(
               spacing: 10,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    border: BoxBorder.all(color: Colors.grey),
+                    border: Border.all(color: Colors.grey),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Delivered to Luanda"),
+                      Text("car_details.delivered_to_luanda".tr()),
                       Radio(
                         value: "Luanda",
                         groupValue: deliveryOption,
@@ -37,22 +38,21 @@ void deliveryDialog(BuildContext context) {
                           setState(() {
                             deliveryOption = value.toString();
                           });
-
                         },
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    border: BoxBorder.all(color: Colors.grey),
+                    border: Border.all(color: Colors.grey),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Delivered to Doorstep"),
+                      Text("car_details.delivered_to_doorstep".tr()),
                       Radio(
                         value: "Doorstep",
                         groupValue: deliveryOption,
@@ -66,8 +66,11 @@ void deliveryDialog(BuildContext context) {
                   ),
                 ),
 
-                SizedBox(height: 10),
-                FilledButton(onPressed:onTapContinueButton, child: Text("Continue")),
+                const SizedBox(height: 10),
+                FilledButton(
+                    onPressed: onTapContinueButton,
+                    child: Text("car_details.continue".tr())
+                ),
               ],
             ),
           );
@@ -75,5 +78,4 @@ void deliveryDialog(BuildContext context) {
       );
     },
   );
-
 }
