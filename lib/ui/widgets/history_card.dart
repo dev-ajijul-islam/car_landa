@@ -21,7 +21,7 @@ class HistoryCard extends StatelessWidget {
       child: Card(
         clipBehavior: Clip.hardEdge,
         child: SizedBox(
-          height: 110,
+          height: 115,
           child: Row(
             children: [
               Expanded(
@@ -50,7 +50,7 @@ class HistoryCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
                         order.carData?["title"],
                         style: TextTheme.of(
@@ -59,7 +59,7 @@ class HistoryCard extends StatelessWidget {
                       ),
                       RichText(
                         text: TextSpan(
-                          text: "Tracking ID: ",
+                          text: "${"history.tracking_id".tr()}: ",
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.black,
@@ -67,14 +67,14 @@ class HistoryCard extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: "#${order.sId?.substring(0, 10)}..",
-                              style: TextStyle(color: Colors.black54),
+                              style: const TextStyle(color: Colors.black54),
                             ),
                           ],
                         ),
                       ),
                       RichText(
                         text: TextSpan(
-                          text: "Date: ",
+                          text: "${"history.date".tr()}: ",
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             color: Colors.black,
@@ -86,7 +86,7 @@ class HistoryCard extends StatelessWidget {
                                       'dd MMM yyyy • hh:mm a',
                                     ).format(order.createdAt!)
                                   : '',
-                              style: TextStyle(color: Colors.black54),
+                              style: const TextStyle(color: Colors.black54),
                             ),
                           ],
                         ),
@@ -114,7 +114,7 @@ class HistoryCard extends StatelessWidget {
   }
 
   String getOrderStatus(OrderModel order) {
-    if (order.tracking.isEmpty) return 'In Progress';
+    if (order.tracking.isEmpty) return 'status.in_progress'.tr();
 
     final current = order.tracking.firstWhere(
       (t) => t.isCurrent,
@@ -127,16 +127,16 @@ class HistoryCard extends StatelessWidget {
 
     final delivered = order.tracking.any((t) => t.isLast && t.isPast);
     if (delivered) {
-      return 'Delivered';
+      return 'status.delivered'.tr();
     }
 
     final canceled = order.tracking.any(
       (t) => t.title.toLowerCase() == 'canceled',
     );
     if (canceled) {
-      return 'Canceled';
+      return 'status.canceled'.tr();
     }
 
-    return 'In Progress';
+    return 'status.in_progress'.tr();
   }
 }
