@@ -1,6 +1,7 @@
 import 'package:car_hub/data/model/order_model.dart';
 import 'package:car_hub/providers/track_car_provider.dart';
 import 'package:car_hub/ui/widgets/history_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +15,7 @@ class MyHistory extends StatefulWidget {
 }
 
 class _MyHistoryState extends State<MyHistory> {
-  final List<String> historySections = ["In Progress", "Delivered", "Canceled"];
+  final List<String> historySections = ["history.in_progress".tr(), "history.delivered".tr(), "history.canceled".tr()];
   int selectedChip = 0;
 
   @override
@@ -28,7 +29,7 @@ class _MyHistoryState extends State<MyHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("My History")),
+      appBar: AppBar(title: Text("history.title".tr())),
       body: Column(
         children: [
           // Chips for filtering
@@ -43,7 +44,7 @@ class _MyHistoryState extends State<MyHistory> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: ChoiceChip(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     showCheckmark: false,
                     label: Text(
                       historySections[index],
@@ -90,18 +91,18 @@ class _MyHistoryState extends State<MyHistory> {
                         .where(
                           (o) => o.tracking.any(
                             (t) => t.isCurrent || t.isUpcoming,
-                          ),
-                        )
+                      ),
+                    )
                         .toList();
                     break;
                   case 1: // Delivered
                     filteredList = provider.userOrders
                         .where(
                           (o) =>
-                              o.tracking.isNotEmpty &&
-                              o.tracking.last.isLast &&
-                              o.tracking.last.isPast,
-                        )
+                      o.tracking.isNotEmpty &&
+                          o.tracking.last.isLast &&
+                          o.tracking.last.isPast,
+                    )
                         .toList();
                     break;
                   case 2: // Canceled
@@ -109,23 +110,23 @@ class _MyHistoryState extends State<MyHistory> {
                         .where(
                           (o) => o.tracking.any(
                             (t) => t.title.toLowerCase() == "canceled",
-                          ),
-                        )
+                      ),
+                    )
                         .toList();
                     break;
                 }
 
                 if (filteredList.isEmpty) {
-                  return const Center(child: Text("No orders found"));
+                  return Center(child: Text("history.no_orders_found".tr()));
                 }
 
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   itemCount: filteredList.length,
                   itemBuilder: (context, index) {
                     final OrderModel item = filteredList[index];
 
-                    return HistoryCard(order: item,);
+                    return HistoryCard(order: item);
                   },
                 );
               },
