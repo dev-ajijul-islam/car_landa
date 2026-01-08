@@ -2,6 +2,7 @@ import 'package:car_hub/providers/hot_deal_car_provider.dart';
 import 'package:car_hub/ui/screens/home/car_details_screen.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,7 @@ class HotDealCarousel extends StatelessWidget {
         return CarouselSlider(
           items: provider.hotDealCars.map((s) {
             return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 20),
               child: GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(
@@ -32,7 +33,6 @@ class HotDealCarousel extends StatelessWidget {
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
-
                         child: Stack(
                           children: [
                             Positioned.fill(
@@ -47,7 +47,6 @@ class HotDealCarousel extends StatelessWidget {
                                 },
                               ),
                             ),
-
                             Container(
                               padding: const EdgeInsets.all(15),
                               decoration: const BoxDecoration(
@@ -56,7 +55,7 @@ class HotDealCarousel extends StatelessWidget {
                               child: Align(
                                 alignment: Alignment.topCenter,
                                 child: Text(
-                                  "Hot Deal",
+                                  "home.hot_deal".tr(),
                                   style: Theme.of(context).textTheme.titleLarge
                                       ?.copyWith(color: Colors.white),
                                 ),
