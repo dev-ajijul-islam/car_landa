@@ -1,5 +1,6 @@
 import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/ui/screens/auth/sign_up/email_verification_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,25 +40,25 @@ class _ResetEmailScreenState extends State<ResetEmailScreen> {
                     children: [
                       const SizedBox(height: 10),
                       Text(
-                        "Enter your email to reset your password",
+                        "reset_email.title".tr(),
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 20),
-                      const Text("Email"),
+                      Text("reset_email.email".tr()),
                       TextFormField(
                         controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Enter email";
+                            return "reset_email.enter_email".tr();
                           }
                           if (!value.contains("@")) {
-                            return "Enter valid email";
+                            return "reset_email.enter_valid_email".tr();
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(
-                          hintText: "Enter Email",
-                          prefixIcon: Icon(Icons.mail_outline_rounded),
+                        decoration: InputDecoration(
+                          hintText: "reset_email.hint_email".tr(),
+                          prefixIcon: const Icon(Icons.mail_outline_rounded),
                         ),
                       ),
                     ],
@@ -74,7 +75,7 @@ class _ResetEmailScreenState extends State<ResetEmailScreen> {
                     width: 22,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                      : const Text("Continue"),
+                      : Text("reset_email.continue".tr()),
                 ),
               ],
             ),
