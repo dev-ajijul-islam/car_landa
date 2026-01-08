@@ -1,6 +1,7 @@
 import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_clippers/custom_clippers.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 void openChatDialog({required BuildContext context}) {
   showDialog(
@@ -9,11 +10,11 @@ void openChatDialog({required BuildContext context}) {
     context: context,
     builder: (context) {
       return DefaultTextStyle(
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
         child: Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: Align(
-            alignment: Alignment(-0.6, 0.2),
+            alignment: const Alignment(-0.6, 0.2),
             child: SizedBox(
               width: MediaQuery.of(context).size.width - 60,
               height: 400,
@@ -22,11 +23,11 @@ void openChatDialog({required BuildContext context}) {
                 child: Container(
                   width: 400,
                   height: 100,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color(0xFF151B27),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Column(
                       children: [
                         Row(
@@ -37,7 +38,7 @@ void openChatDialog({required BuildContext context}) {
                               children: [
                                 Image.asset(AssetsFilePaths.helpImg),
                                 Text(
-                                  "Help & Support",
+                                  "home.help_support".tr(),
                                   style: TextTheme.of(context).titleMedium
                                       ?.copyWith(color: Colors.white, fontSize: 18),
                                 ),
@@ -47,14 +48,14 @@ void openChatDialog({required BuildContext context}) {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.do_not_disturb_on_outlined,
                                 color: Colors.white,
                               ),
                             ),
                           ],
                         ),
-                        Divider(),
+                        const Divider(),
                         Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,19 +64,19 @@ void openChatDialog({required BuildContext context}) {
                                 child: ListView(
                                   children: List.generate(
                                     10,
-                                    (index) => ClipPath(
+                                        (index) => ClipPath(
                                       clipper: LowerNipMessageClipper(
                                         (index % 2 == 0)
                                             ? MessageType.send
                                             : MessageType.receive,
                                       ),
                                       child: Container(
-                                        padding: EdgeInsets.all(20),
+                                        padding: const EdgeInsets.all(20),
                                         color: (index % 2 == 0)
                                             ? ColorScheme.of(context).primary
                                             : Colors.red.withAlpha(100),
                                         alignment: Alignment.center,
-                                        child: Text(
+                                        child: const Text(
                                           'Multiple Points Clipper Bottom Only',
                                           style: TextStyle(
                                             fontSize: 14,
@@ -93,11 +94,11 @@ void openChatDialog({required BuildContext context}) {
                                   padding: const EdgeInsets.only(bottom: 8),
                                   child: TextField(
                                     decoration: InputDecoration(
-                                      hintText: "Ask your question",
+                                      hintText: "chat_dialog.ask_question".tr(),
                                       suffixIcon: IconButton(
                                         color: ColorScheme.of(context).primary,
                                         onPressed: () {},
-                                        icon: Icon(Icons.telegram_outlined),
+                                        icon: const Icon(Icons.telegram_outlined),
                                       ),
                                     ),
                                   ),
