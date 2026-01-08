@@ -114,6 +114,14 @@
     "hot_deal": "হট ডিল",
     "help_support": "হেল্প ও সাপোর্ট"
   },
+  "tracking_progress": {
+    "title": "আপনার গাড়ি ট্র্যাক করুন",
+    "order_placed": "অর্ডার দেওয়া হয়েছে",
+    "shipped": "শিপ করা হয়েছে",
+    "in_transit": "ট্রানজিটে রয়েছে",
+    "arrived_at_port": "বন্দরে পৌঁছেছে",
+    "delivery_to_port": "পোর্টে ডেলিভারি"
+  },
   "hero_banner": {
     "hello": "হ্যালো",
     "welcome_back": "আপনাকে আবার স্বাগতম!"
@@ -194,11 +202,6 @@
       "track_your_car": "আপনার গাড়ি ট্র্যাক করুন",
       "enter_valid_code": "দয়া করে একটি বৈধ ট্র্যাকিং কোড লিখুন"
     }
-  },
-
-  "tracking_progress": {
-    "title": "আপনার গাড়ি ট্র্যাক করুন",
-    "delivery_to_port": "পোর্টে ডেলিভারি"
   },
 
   "view_cars": {

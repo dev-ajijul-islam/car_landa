@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -60,7 +61,7 @@ class TrackingProgressTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                getTranslatedTitle(title),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: isUpcoming ? Colors.grey : Colors.black,
@@ -71,16 +72,50 @@ class TrackingProgressTile extends StatelessWidget {
                     ? pastColor
                     : inactiveColor,
                 radius: 10,
-                child: Icon(Icons.done_outlined, size: 14),
+                child: const Icon(Icons.done_outlined, size: 14),
               ),
             ],
           ),
           subtitle: Text(
-            subtitle,
+            getTranslatedSubtitle(subtitle),
             style: TextStyle(color: isUpcoming ? Colors.grey : Colors.black54),
           ),
         ),
       ),
     );
+  }
+
+  String getTranslatedTitle(String title) {
+    // Map common tracking status titles to localization keys
+    switch (title.toLowerCase()) {
+      case 'order placed':
+      case 'order received':
+        return 'tracking_progress.order_placed'.tr();
+      case 'processing':
+      case 'in progress':
+        return 'status.in_progress'.tr();
+      case 'shipped':
+      case 'departed':
+        return 'tracking_progress.shipped'.tr();
+      case 'in transit':
+        return 'tracking_progress.in_transit'.tr();
+      case 'arrived at port':
+      case 'arrived at destination':
+        return 'tracking_progress.arrived_at_port'.tr();
+      case 'custom clearance':
+        return 'car_details.custom_clearance'.tr();
+      case 'delivered':
+        return 'status.delivered'.tr();
+      case 'canceled':
+        return 'status.canceled'.tr();
+      default:
+        return title;
+    }
+  }
+
+  String getTranslatedSubtitle(String subtitle) {
+    // You can add specific subtitle translations here if needed
+    // For now, just return the subtitle as-is
+    return subtitle;
   }
 }

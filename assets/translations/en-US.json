@@ -136,6 +136,14 @@
     },
     "login_prompt": "Login"
   },
+  "tracking_progress": {
+    "title": "Track your car",
+    "delivery_to_port": "Delivery to Port",
+    "order_placed": "Order Placed",
+    "shipped": "Shipped",
+    "in_transit": "In Transit",
+    "arrived_at_port": "Arrived at Port"
+  },
   "hero_banner": {
     "hello": "Hello",
     "welcome_back": "Welcome back!"
@@ -198,12 +206,6 @@
       "enter_valid_code": "Please enter a valid tracking code"
     }
   },
-
-  "tracking_progress": {
-    "title": "Track your car",
-    "delivery_to_port": "Delivery to Port"
-  },
-
   "view_cars": {
     "title": "View Cars",
     "search": "Search",
