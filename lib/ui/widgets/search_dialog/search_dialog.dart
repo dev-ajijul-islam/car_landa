@@ -4,6 +4,7 @@ import 'package:car_hub/ui/screens/home/car_details_screen.dart';
 import 'package:car_hub/ui/screens/home/search_result_screen.dart';
 import 'package:car_hub/ui/widgets/search_dialog/seacrch_filter_sheet.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,13 +13,12 @@ void searchDialog(BuildContext context) {
     searchFilter(context);
   }
 
-
-
   final TextEditingController searchController = TextEditingController();
 
   void onSubmit() {
     Navigator.pushNamed(context, SearchResultScreen.name);
   }
+
   showDialog(
     barrierColor: Colors.transparent,
     useSafeArea: true,
@@ -40,7 +40,7 @@ void searchDialog(BuildContext context) {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: Icon(Icons.close_outlined),
+                        icon: const Icon(Icons.close_outlined),
                       ),
                       Expanded(
                         child: TextField(
@@ -53,12 +53,12 @@ void searchDialog(BuildContext context) {
                           },
                           autofocus: true,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.search_outlined),
-                            hintText: "Search",
+                            prefixIcon: const Icon(Icons.search_outlined),
+                            hintText: "search_dialog.search".tr(),
                             suffixIcon: IconButton(
                               color: ColorScheme.of(context).primary,
                               onPressed: onTapFilterButton,
-                              icon: Icon(Icons.read_more_outlined, weight: 800),
+                              icon: const Icon(Icons.read_more_outlined, weight: 800),
                             ),
                           ),
                         ),
@@ -71,16 +71,16 @@ void searchDialog(BuildContext context) {
                               .read<AdvanceSearchProvider>()
                               .getCarsByFiltering(title: searchController.text);
                         },
-                        icon: Icon(Icons.restore_rounded),
+                        icon: const Icon(Icons.restore_rounded),
                       ),
                     ],
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Divider(color: Colors.grey),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Expanded(
                     child: Consumer<AdvanceSearchProvider>(
                       builder: (context, provider, child) {
@@ -97,7 +97,6 @@ void searchDialog(BuildContext context) {
                               },
                               minVerticalPadding: 0,
                               title: Text(car.title),
-
                               tileColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),
@@ -108,7 +107,6 @@ void searchDialog(BuildContext context) {
                                   car.media.thumbnail.isNotEmpty
                                       ? car.media.thumbnail
                                       : 'https://via.placeholder.com/400x250',
-
                                   width: 58,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Image.asset(
@@ -122,7 +120,7 @@ void searchDialog(BuildContext context) {
                             );
                           },
                           separatorBuilder: (context, index) {
-                            return SizedBox(height: 10);
+                            return const SizedBox(height: 10);
                           },
                           itemCount: provider.searchedCars.length.clamp(0, 10),
                         );
