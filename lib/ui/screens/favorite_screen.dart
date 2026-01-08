@@ -1,5 +1,6 @@
 import 'package:car_hub/providers/favorite_provider.dart';
 import 'package:car_hub/ui/widgets/car_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,23 +31,23 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Favorite Car (${context.watch<FavoriteProvider>().favoriteCars.length})",
+            "${"favorite_screen.title".tr()} (${context.watch<FavoriteProvider>().favoriteCars.length})",
           ),
         ),
         body: Consumer<FavoriteProvider>(
           builder: (context, provider, child) => provider.favoriteCars.isEmpty
-              ? Center(child: Text("No favorite car found"))
+              ? Center(child: Text("favorite_screen.no_favorite_car".tr()))
               : Visibility(
-                  visible: provider.isLoading == false,
-                  replacement: Center(child: CircularProgressIndicator()),
-                  child: ListView.separated(
-                    itemCount: provider.favoriteCars.length,
-                    padding: EdgeInsets.all(20),
-                    itemBuilder: (context, index) =>
-                        CarCard(car: provider.favoriteCars[index]),
-                    separatorBuilder: (context, index) => SizedBox(height: 10),
-                  ),
-                ),
+            visible: provider.isLoading == false,
+            replacement: const Center(child: CircularProgressIndicator()),
+            child: ListView.separated(
+              itemCount: provider.favoriteCars.length,
+              padding: const EdgeInsets.all(20),
+              itemBuilder: (context, index) =>
+                  CarCard(car: provider.favoriteCars[index]),
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+            ),
+          ),
         ),
       ),
     );
