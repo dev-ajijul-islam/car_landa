@@ -6,6 +6,7 @@ import 'package:car_hub/ui/screens/home/payment_screen.dart';
 import 'package:car_hub/ui/widgets/common_dialog.dart';
 import 'package:car_hub/ui/widgets/loading.dart';
 import 'package:car_hub/ui/widgets/show_snackbar_message.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +29,7 @@ class BookingCostCalculation extends StatelessWidget {
     final double total = carPrice + shipping;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Car cost")),
+      appBar: AppBar(title: Text("booking_cost.title".tr())),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -36,7 +37,7 @@ class BookingCostCalculation extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Cost Summary",
+              "booking_cost.cost_summary".tr(),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             Card(
@@ -51,7 +52,7 @@ class BookingCostCalculation extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Car price",
+                          "booking_cost.car_price".tr(),
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
@@ -64,7 +65,7 @@ class BookingCostCalculation extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Shipping",
+                          "booking_cost.shipping".tr(),
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
@@ -78,7 +79,7 @@ class BookingCostCalculation extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Total price",
+                          "booking_cost.total_price".tr(),
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
@@ -120,7 +121,7 @@ class BookingCostCalculation extends StatelessWidget {
                           location,
                           orderProvider,
                         ),
-                        child: const Text("Book now"),
+                        child: Text("booking_cost.book_now".tr()),
                       ),
                     );
                   },
@@ -148,7 +149,7 @@ class BookingCostCalculation extends StatelessWidget {
     if (user == null) {
       showSnackbarMessage(
         context: context,
-        message: "Please login to book a car",
+        message: "booking_cost.please_login".tr(),
         color: Colors.red,
       );
       return;
@@ -174,8 +175,8 @@ class BookingCostCalculation extends StatelessWidget {
 
       commonDialog(
         context,
-        title: "Order Created Successfully",
-        subtitle: "Your order has been placed. Proceed to payment.",
+        title: "booking_cost.order_created_success".tr(),
+        subtitle: "booking_cost.order_created_message".tr(),
       );
 
       Future.delayed(const Duration(seconds: 1), () {
