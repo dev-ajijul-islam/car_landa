@@ -1,5 +1,6 @@
 import 'package:car_hub/ui/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -31,14 +32,14 @@ class ResetPasswordSuccess extends StatelessWidget {
               children: [
                 Text(
                   textAlign: TextAlign.center,
-                  "Successfully Reset your \n password",
+                  "reset_password_success.title".tr(),
                   style: TextTheme.of(context).titleMedium,
                 ),
                 FilledButton(
                   onPressed: () {
                     _onTapGoToSignInScreenButton(context);
                   },
-                  child: Text("Go to Sign in screen"),
+                  child: Text("reset_password_success.go_to_sign_in".tr()),
                 ),
               ],
             ),
