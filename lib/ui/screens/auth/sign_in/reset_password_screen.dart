@@ -1,4 +1,5 @@
 import 'package:car_hub/ui/screens/auth/sign_in/reset_password_success.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -25,41 +26,45 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 spacing: 10,
                 children: [
                   Text(
-                    "Reset your password",
+                    "reset_password.title".tr(),
                     style: TextTheme.of(context).titleMedium,
                   ),
-                  Text("The password must be different than before"),
+                  Text("reset_password.subtitle".tr()),
                   SizedBox(height: 20),
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 10),
-                      child: Text("Password"),
+                      child: Text("reset_password.password".tr()),
                     ),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.lock_outline_rounded),
                       suffixIcon: Icon(Icons.visibility_off_outlined),
-                      hintText: "Password",
+                      hintText: "reset_password.hint_password".tr(),
                     ),
-                  ),Align(
+                  ),
+                  Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 10),
-                      child: Text("Confirm Password"),
+                      child: Text("reset_password.confirm_password".tr()),
                     ),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.lock_outline_rounded),
                       suffixIcon: Icon(Icons.visibility_off_outlined),
-                      hintText: "Confirm Password",
+                      hintText: "reset_password.hint_confirm_password".tr(),
                     ),
                   ),
                 ],
               ),
-              FilledButton(onPressed: _onTapContinue, child: Text("Continue")),
+              FilledButton(
+                  onPressed: _onTapContinue,
+                  child: Text("reset_password.continue".tr())
+              ),
             ],
           ),
         ),
