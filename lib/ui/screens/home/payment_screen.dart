@@ -2,6 +2,7 @@ import 'package:car_hub/providers/payment_provider.dart';
 import 'package:car_hub/ui/screens/track_car/tracking_progress.dart';
 import 'package:car_hub/ui/widgets/loading.dart';
 import 'package:car_hub/utils/assets_file_paths.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     allOrderData =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     Future.microtask((){
       if(mounted){
@@ -37,14 +38,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Payment")),
+      appBar: AppBar(title: Text("payment.title".tr())),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Payment Option",
+              "payment.payment_option".tr(),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 10),
@@ -67,7 +68,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             });
                           },
                         ),
-                        const Text("Pay with SSLCommerz"),
+                        Text("payment.pay_with_sslcommerz".tr()),
                       ],
                     ),
                     Image.asset(width: 60, AssetsFilePaths.creditCard),
@@ -105,7 +106,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         });
 
                         return _buildStatusButton(
-                          label: "Payment Successful",
+                          label: "payment.payment_successful".tr(),
                           color: Colors.green,
                           icon: Icons.check_circle,
                           enabled: false,
@@ -117,7 +118,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         return Column(
                           children: [
                             _buildStatusButton(
-                              label: "Try Again",
+                              label: "payment.try_again".tr(),
                               color: Colors.red,
                               enabled: true,
                               onPressed: () => _processPayment(paymentProvider),
@@ -137,7 +138,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       }
 
                       return _buildStatusButton(
-                        label: "Pay Now",
+                        label: "payment.pay_now".tr(),
                         color: Theme.of(context).colorScheme.primary,
                         enabled: true,
                         onPressed: () => _processPayment(paymentProvider),
@@ -173,24 +174,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 Text(
-                  "Payment Information",
+                  "payment.payment_information".tr(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            _buildRichText("Selected Method : ", "SSLCommerz Online Payment"),
+            _buildRichText("payment.selected_method".tr(), "payment.sslcommerz_online_payment".tr()),
             _buildRichText(
-              "Order Amount : ",
+              "payment.order_amount".tr(),
               "\$${allOrderData['totalPrice']}",
             ),
             _buildRichText(
-              "Order ID : ",
+              "payment.order_id".tr(),
               "#${order?.sId?.substring(0, 8) ?? 'N/A'}",
             ),
             _buildRichText(
-              "Note : ",
-              "Complete payment to proceed with car delivery",
+              "payment.note".tr(),
+              "payment.complete_payment_note".tr(),
             ),
           ],
         ),
@@ -203,7 +204,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: RichText(
         text: TextSpan(
-          text: label,
+          text: "$label : ",
           style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w600,
@@ -249,8 +250,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     if (order == null || order.sId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Order information missing'),
+        SnackBar(
+          content: Text('payment.order_information_missing'.tr()),
           backgroundColor: Colors.red,
         ),
       );
