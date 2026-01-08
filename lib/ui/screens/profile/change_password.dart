@@ -1,4 +1,5 @@
 import 'package:car_hub/providers/auth_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +38,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         final loading = authProvider.inProgress;
 
         return Scaffold(
-          appBar: AppBar(title: const Text("Change password")),
+          appBar: AppBar(title: Text("change_password.title".tr())),
           body: Padding(
             padding: const EdgeInsets.all(20),
             child: Form(
@@ -47,16 +48,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Existing password",
+                    "change_password.existing_password".tr(),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   TextFormField(
                     controller: _oldPasswordController,
                     obscureText: _oldObscure,
                     validator: (v) =>
-                        v == null || v.isEmpty ? "Enter old password" : null,
+                    v == null || v.isEmpty ? "change_password.enter_old_password".tr() : null,
                     decoration: InputDecoration(
-                      hintText: "Existing password",
+                      hintText: "change_password.hint_existing".tr(),
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -71,7 +72,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   ),
 
                   Text(
-                    "New password",
+                    "change_password.new_password".tr(),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   TextFormField(
@@ -79,15 +80,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                     obscureText: _newObscure,
                     validator: (v) {
                       if (v == null || v.isEmpty) {
-                        return "Enter new password";
+                        return "change_password.enter_new_password".tr();
                       }
                       if (v.length < 6) {
-                        return "Password must be at least 6 characters";
+                        return "change_password.password_min_length".tr();
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                      hintText: "New password",
+                      hintText: "change_password.hint_new".tr(),
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -102,7 +103,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   ),
 
                   Text(
-                    "Confirm password",
+                    "change_password.confirm_password".tr(),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   TextFormField(
@@ -110,15 +111,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                     obscureText: _confirmObscure,
                     validator: (v) {
                       if (v == null || v.isEmpty) {
-                        return "Confirm your password";
+                        return "change_password.confirm_your_password".tr();
                       }
                       if (v != _newPasswordController.text) {
-                        return "Passwords do not match";
+                        return "change_password.passwords_not_match".tr();
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                      hintText: "Confirm password",
+                      hintText: "change_password.hint_confirm".tr(),
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -140,11 +141,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                       onPressed: loading ? null : () => _onSubmit(authProvider),
                       child: loading
                           ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text("Change Password"),
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                          : Text("change_password.change_password_button".tr()),
                     ),
                   ),
                 ],
