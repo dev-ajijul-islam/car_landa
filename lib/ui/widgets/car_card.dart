@@ -8,6 +8,7 @@ import 'package:car_hub/utils/assets_file_paths.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CarCard extends StatefulWidget {
   final CarModel car;
@@ -19,11 +20,31 @@ class CarCard extends StatefulWidget {
 }
 
 class _CarCardState extends State<CarCard> {
+  // ------------------ URL Launcher Helper ------------------
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
+
+  // ------------------ Call / SMS / WhatsApp ------------------
+  void _callNumber(String phone) {
+    _launchUrl("tel:$phone");
+  }
+
+  void _sendSms(String phone) {
+    _launchUrl("sms:$phone");
+  }
+
+  void _openWhatsApp(String phone) {
+    final cleanNumber = phone.replaceAll("+", "");
+    _launchUrl("https://wa.me/$cleanNumber");
+  }
+
   @override
   Widget build(BuildContext context) {
-
     final providerCar = context.watch<SingleCarProvider>().car;
-
 
     final car = (providerCar != null && providerCar.sId == widget.car.sId)
         ? providerCar
@@ -38,7 +59,10 @@ class _CarCardState extends State<CarCard> {
           ? car.pricing.originalPrice * (discount.value / 100)
           : discount.value.toDouble();
     }
+
     final finalPrice = car.pricing.originalPrice - discountAmount;
+
+    final phoneNumber = "01234567890";
 
     return GestureDetector(
       onTap: () {
@@ -71,28 +95,33 @@ class _CarCardState extends State<CarCard> {
                     ),
                   ),
 
-                  // Badges
+                  // ------------------ Badges ------------------
                   if (car.flags.isHotDeal)
                     _buildBadge("HOT DEAL", Colors.red)
                   else if (car.flags.isFeatured)
                     _buildBadge("FEATURED", Colors.blue),
 
-                  // Favorite button
+                  // ------------------ Favorite Button ------------------
                   Positioned(
                     top: 5,
                     right: 0,
                     child: Consumer<FavoriteProvider>(
                       builder: (context, favProvider, child) {
-                        final isSingleCarLoading = context.watch<SingleCarProvider>().loading;
+                        final isSingleCarLoading = context
+                            .watch<SingleCarProvider>()
+                            .loading;
 
                         return IconButton(
                           onPressed: () async {
                             final bool currentlyFav = car.isFavorite ?? false;
 
-
                             final response = currentlyFav
-                                ? await favProvider.deleteFavorite(carId: car.sId)
-                                : await favProvider.createFavorite(carId: car.sId);
+                                ? await favProvider.deleteFavorite(
+                                    carId: car.sId,
+                                  )
+                                : await favProvider.createFavorite(
+                                    carId: car.sId,
+                                  );
 
                             if (!context.mounted) return;
 
@@ -103,7 +132,9 @@ class _CarCardState extends State<CarCard> {
                                 color: Colors.green,
                               );
 
-                              context.read<SingleCarProvider>().getCarById(car.sId);
+                              context.read<SingleCarProvider>().getCarById(
+                                car.sId,
+                              );
                             } else {
                               showSnackbarMessage(
                                 context: context,
@@ -114,16 +145,16 @@ class _CarCardState extends State<CarCard> {
                           },
                           icon: (favProvider.isLoading || isSingleCarLoading)
                               ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: Loading(),
-                          )
+                                  width: 20,
+                                  height: 20,
+                                  child: Loading(),
+                                )
                               : Icon(
-                            car.isFavorite == true
-                                ? Icons.favorite
-                                : Icons.favorite_border_outlined,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                                  car.isFavorite == true
+                                      ? Icons.favorite
+                                      : Icons.favorite_border_outlined,
+                                  color: Theme.of(context).primaryColor,
+                                ),
                         );
                       },
                     ),
@@ -131,8 +162,12 @@ class _CarCardState extends State<CarCard> {
                 ],
               ),
 
+              // ------------------ Content ------------------
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 13,
+                  vertical: 10,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -174,15 +209,21 @@ class _CarCardState extends State<CarCard> {
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 10),
+
                     Row(
                       children: [
                         Text("${"car_card.year".tr()} : ${car.year}"),
                         const SizedBox(width: 15),
-                        Text("${"car_card.mileage".tr()} : ${car.specs.mileageKm.toStringAsFixed(0)}km"),
+                        Text(
+                          "${"car_card.mileage".tr()} : ${car.specs.mileageKm.toStringAsFixed(0)}km",
+                        ),
                       ],
                     ),
+
                     const SizedBox(height: 5),
+
                     Row(
                       children: [
                         const Icon(Icons.location_on_outlined, size: 16),
@@ -190,8 +231,26 @@ class _CarCardState extends State<CarCard> {
                         Text("${car.location.city}, ${car.location.country}"),
                       ],
                     ),
+
                     const SizedBox(height: 15),
-                    _buildActionButtons(car),
+
+                    // ------------------ Action Buttons ------------------
+                    Row(
+                      children: [
+                        _expandedButton(
+                          Icons.phone_outlined,
+                          car.inquiryContacts.call,
+                          () => _callNumber(phoneNumber),
+                        ),
+                        const SizedBox(width: 8),
+                        _expandedButton(
+                          Icons.message,
+                          car.inquiryContacts.message,
+                          () => _sendSms(phoneNumber),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -202,6 +261,7 @@ class _CarCardState extends State<CarCard> {
     );
   }
 
+  // ------------------ Badge Widget ------------------
   Widget _buildBadge(String text, Color color) {
     return Positioned(
       top: 10,
@@ -214,32 +274,27 @@ class _CarCardState extends State<CarCard> {
         ),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildActionButtons(CarModel car) {
-    return Row(
-      children: [
-        _expandedButton(Icons.phone_outlined, car.inquiryContacts.call),
-        const SizedBox(width: 8),
-        _expandedButton(Icons.message, car.inquiryContacts.message),
-        const SizedBox(width: 8),
-        _expandedButton(Icons.whatshot, car.inquiryContacts.whatsapp),
-      ],
-    );
-  }
-
-  Widget _expandedButton(IconData icon, bool enabled) {
+  // ------------------ Button Widget ------------------
+  Widget _expandedButton(IconData icon, bool enabled, VoidCallback onTap) {
     return Expanded(
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           padding: const EdgeInsets.symmetric(vertical: 8),
         ),
-        onPressed: enabled ? () {} : null,
+        onPressed: enabled ? onTap : null,
         child: Icon(icon, size: 20),
       ),
     );
