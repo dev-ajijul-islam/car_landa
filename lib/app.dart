@@ -13,6 +13,7 @@ import 'package:car_hub/providers/favorite_provider.dart';
 import 'package:car_hub/providers/featured_car_provider.dart';
 import 'package:car_hub/providers/hot_deal_car_provider.dart';
 import 'package:car_hub/providers/language_provider.dart';
+import 'package:car_hub/providers/notifications_provider.dart';
 import 'package:car_hub/providers/order_tracking_provider.dart';
 import 'package:car_hub/providers/payment_provider.dart';
 import 'package:car_hub/providers/single_car_provider.dart';
@@ -76,6 +77,7 @@ class CarHub extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TrackCarProvider()),
         ChangeNotifierProvider(create: (_) => OrderTrackingProvider()),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationsProvider(),)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
