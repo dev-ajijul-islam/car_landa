@@ -306,7 +306,7 @@
   "payment": {
     "title": "পেমেন্ট",
     "payment_option": "পেমেন্ট অপশন",
-    "pay_with_sslcommerz": "SSLCommerz দিয়ে পেমেন্ট করুন",
+    "pay_with_sslcommerz": "SSLCommerz পেমেন্ট করুন",
     "payment_information": "পেমেন্ট তথ্য",
     "selected_method": "নির্বাচিত পদ্ধতি",
     "order_amount": "অর্ডারের পরিমাণ",

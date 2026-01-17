@@ -54,7 +54,7 @@ class PaymentProvider extends ChangeNotifier {
           store_passwd: "carla69540721933be@ssl",
           total_amount: totalAmount,
           tran_id: "${orderId}_${DateTime.now().millisecondsSinceEpoch}",
-          currency: SSLCurrencyType.BDT,
+          currency: SSLCurrencyType.USD,
           product_category: "Automotive",
           sdkType: SSLCSdkType.TESTBOX,
         ),
