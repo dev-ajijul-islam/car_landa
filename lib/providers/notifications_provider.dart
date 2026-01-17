@@ -9,12 +9,41 @@ class NotificationsProvider extends ChangeNotifier {
   bool isLoading = false;
   List<NotificationModel> notifications = [];
 
-  Future<void> getNotifications({required String userId}) async {
+  Future<void> createNotification({required NotificationModel notification}) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      final NetworkResponse response = await NetworkCaller.postRequest(
+        body: notification.toJson(),
+        url: Urls.createNotifications,
+        token: AuthProvider.idToken
+      );
+
+      if (response.success) {
+        final list = response.body?["body"];
+
+        for (var notification in list) {
+          notifications.add(NotificationModel.fromJson(notification));
+        }
+      } else {
+        debugPrint(response.statusCode.toString());
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+
+  Future<void> getNotifications() async {
     isLoading = true;
     notifyListeners();
     try {
       final NetworkResponse response = await NetworkCaller.getRequest(
-        url: Urls.getNotifications(userId),
+        url: Urls.getNotifications,
         token: AuthProvider.idToken
       );
 

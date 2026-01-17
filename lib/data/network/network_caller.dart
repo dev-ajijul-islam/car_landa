@@ -49,13 +49,14 @@ class NetworkCaller {
     String? token,
   }) async {
     Uri uri = Uri.parse(url);
-
     try {
       Response response = await post(
         uri,
         headers: {"Content-Type": "application/json", "token": token ?? ""},
         body: jsonEncode(body),
       );
+
+
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode == 201) {
@@ -73,6 +74,7 @@ class NetworkCaller {
         );
       }
     } catch (e) {
+      print("===================================================${body}");
       return NetworkResponse(
         statusCode: null,
         success: false,

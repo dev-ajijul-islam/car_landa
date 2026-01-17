@@ -22,6 +22,7 @@ class AuthProvider extends ChangeNotifier {
   User? firebaseUser;
   UserModel? dbUser;
 
+
   static String? idToken;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -106,7 +107,7 @@ class AuthProvider extends ChangeNotifier {
       firebaseUser = credential.user;
       if (firebaseUser == null) return false;
 
-      // ❌ BLOCK UNVERIFIED USERS
+
       if (!firebaseUser!.emailVerified) {
         await _auth.signOut();
         showSnackbarMessage(

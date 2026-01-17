@@ -1,4 +1,3 @@
-import 'package:car_hub/providers/auth_provider.dart';
 import 'package:car_hub/providers/notifications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -17,9 +16,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void initState() {
     Future.microtask(() {
       if (mounted) {
-        context.read<NotificationsProvider>().getNotifications(
-          userId: AuthProvider().dbUser!.id.toString(),
-        );
+        context.read<NotificationsProvider>().getNotifications();
       }
     });
     super.initState();
@@ -43,16 +40,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             return Center(child: Text("Notification not found"));
           }
           return ListView.separated(
-            itemBuilder: (context, index) => ListTile(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            itemBuilder: (context, index) {
+              final notification = provider.notifications[index];
+              return ListTile(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10)),
               visualDensity: VisualDensity.adaptivePlatformDensity,
+              title: Text(notification.title),
               tileColor: Colors.white,
-              subtitle: Text("notifications.sample_message".tr()),
-              trailing: Text("notifications.time_ago".tr()),
+              subtitle: Text(notification.body),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(DateFormat("d MMM h:m:a").format(notification.createdAt!),),
+                ],
+              ),
               leading: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.notifications, color: Colors.orange),
               ),
-            ),
+            );
+            },
             separatorBuilder: (context, index) => const SizedBox(height: 5),
             itemCount: provider.notifications.length,
           );
