@@ -49,8 +49,8 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 
 Future<void> createNotification(RemoteMessage message) async {
   final NotificationModel notification = NotificationModel(
-    body: message.notification!.title.toString(),
-    title: message.notification!.body.toString(),
+    body: message.notification!.body.toString(),
+    title: message.notification!.title.toString(),
     userId: FirebaseAuth.instance.currentUser!.uid,
   );
   try {

@@ -48,6 +48,7 @@ class NotificationsProvider extends ChangeNotifier {
       );
 
       if (response.success) {
+        notifications.clear();
         final list = response.body?["body"];
 
         for (var notification in list) {
